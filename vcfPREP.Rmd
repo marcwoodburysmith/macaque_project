@@ -1,0 +1,239 @@
+---
+title: "vcfPREP"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Execute this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+
+===================================================================================
+
+
+
+Index the mGaP file, generate list of chromosomes and then generate chromosome specific files.
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+tabix -p vcf mGap.v2.0.vcf.gz
+tabix --list-chroms mGap.v2.0.vcf.gz > chromosomes.txt 
+for i in {1..20}; do bcftools filter -r $i -o chr$i.vcf.gz -Oz mGap.v2.0.vcf.gz; done
+```
+
+Index individual chromosome vcf files
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+for i in {19..20}; do
+tabix -p vcf chr$i.vcf.gz;
+done
+```
+
+Generate chromosome by chromosome statistics
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+mkdir chr_stats
+for i in {1..16}; do
+bcftools +counts chr$i.vcf.gz > chr_stats/chr$i.txt;
+done
+```
+
+
+Variant specific quality scores
+
+```{zsh engine.opts='-i'}
+cd //Path/to/files
+mkdir analyses/mgap2_analyses/qual
+for chr in {1..20}; do
+vcftools --gzvcf chr$chr.vcf.gz --site-quality --out analyses/mgap2_analyses/qual/$chr;
+done
+cd analyses/mgap2_analyses/qual
+find . -name "*.lqual" | xargs -n 1 tail -n +2 > qual.txt
+```
+
+Plot these quality scores
+
+```{r}
+setwd("/Path/to/files/analyses/mgap2_analyses/qual")
+library(tidyverse)
+var_qual <- read_delim("qual.txt", delim = "\t", col_names = c("chr", "pos", "qual"), skip = 1)
+a <- ggplot(var_qual, aes(qual)) + geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3)
+a + theme_light() + xlim(0, 1000)
+```
+
+Variant specific depth
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+mkdir analyses/mgap2_analyses/var_depth
+for chr in {1..20}; do
+vcftools --gzvcf chr$chr.vcf.gz --site-mean-depth --out analyses/mgap2_analyses/var_depth/$chr;
+done
+cd analyses/mgap2_analyses/var_depth
+find . -name "*.ldepth.mean" | xargs -n 1 tail -n +2 > var_depth.txt
+```
+
+Plot variant specific depth
+
+```{r}
+setwd("/Path/to/files/analyses/mgap2_analyses/var_depth")
+library(tidyverse)
+var_depth <- read_delim("var_depth.txt", delim = "\t",
+           col_names = c("chr", "pos", "mean_depth", "var_depth"))
+#note that var_depth column gives indication of variance across individuals for each variant
+#summary stats
+summary(var_depth$mean_depth)
+pdf("mGaP - 2.0 - depth by variant.pdf", width = 4, height = 4)
+a <- ggplot(var_depth, aes(mean_depth)) + geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3)
+a + theme_light() + xlab("mean var depth") + ggtitle("Density plot for mean variant depth \n across individuals in mGaP2.0") + theme(plot.title=element_text(vjust=-2.5)) + xlim(0,100)
+dev.off()
+```
+
+Individual depth
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+mkdir analyses/mgap2_analyses/ind_depth
+for chr in {1..20}; do
+vcftools --gzvcf chr$chr.vcf.gz --depth --out analyses/mgap2_analyses/ind_depth/$chr;
+done
+cd analyses/mgap2_analyses/ind_depth
+find . -name "*.idepth" | xargs -n 1 tail -n +2 > ind_depth.txt
+```
+
+Plot individual depth
+
+```{r}
+setwd("/Path/to/files/analyses/mgap2_analyses/ind_depth")
+library(tidyverse)
+ind_depth <- read_delim("ind_depth.txt", delim = "\t",
+           col_names = c("ind", "nsites", "depth"))
+ind_depth$ind<-as.factor(ind_depth$ind)
+ind_depth2<-ind_depth %>% group_by(ind) %>% summarize(mean_dep = mean(depth))
+#summary stats
+summary(ind_depth$depth)
+pdf("mGaP - 2.0 - depth by individual.pdf", width = 4, height = 4)
+a <- ggplot(ind_depth2, aes(mean_dep)) + geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3)
+a + theme_light() + annotate("text", x=mean(range(ind_depth2$mean_dep)), y=Inf, label="Density plot for depth by indiv in mGaP2.0", vjust=1.5, size=3) + xlab("mean indiv depth")
+dev.off()
+```
+
+Variant missingness
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+mkdir analyses/mgap2_analyses/variant_missing
+for chr in {1..20}; do
+vcftools --gzvcf  chr$chr.vcf.gz --missing-site --out analyses/mgap2_analyses/variant_missing/$chr;
+done
+cd analyses/mgap2_analyses/variant_missing
+find . -name "*.lmiss" | xargs -n 1 tail -n +2 > var_miss.txt
+```
+
+Plot variant missingness
+
+```{r}
+setwd("//Path/to/files/analyses/mgap2_analyses/variant_missing")
+library(tidyverse)
+var_miss <- read_delim("var_miss.txt", delim = "\t",
+                     col_names = c("chr", "pos", "nchr", "nfiltered", "nmiss", "fmiss"))
+#summary stats
+summary(var_miss$fmiss)
+pdf("mGaP - 2.0 - variant missingness by variant.pdf", width = 4, height = 4)
+a <- ggplot(var_miss, aes(fmiss)) + geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3)
+a + theme_light() + annotate("text", x=mean(range(var_miss$fmiss)), y=Inf, label="Density plot of variant missingness \n in mGaP2.0", vjust=1.5, size=3) + xlab("fraction missing")
+dev.off()
+```
+
+Sample missingness
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+mkdir analyses/mgap2_analyses/sample_missing
+for chr in {1..20}; do
+vcftools --gzvcf chr$chr.vcf.gz --missing-indv --out sample_missing/$chr;
+done
+cd analyses/mgap2_analyses/sample_missing
+find . -name "*.imiss" | xargs -n 1 tail -n +2 > sample_missing.txt
+```
+
+Plot sample missingness
+
+```{r}
+setwd("/Path/to/files/analyses/mgap2_analyses/sample_missing")
+library(tidyverse)
+ind_miss  <- read_delim("sample_missing.txt", delim = "\t",
+                        col_names = c("ind", "ndata", "nfiltered", "nmiss", "fmiss"), skip = 1)
+ind_miss$ind<-as.factor(ind_miss$ind)
+ind_miss2<-ind_miss %>% group_by(ind) %>% summarize(mean_fmiss = mean(fmiss))
+#summary stats
+summary(ind_miss$fmiss)
+pdf("mGaP - 2.0 - variant missingness by subject.pdf", width = 4, height = 4)
+a <- ggplot(ind_miss2, aes(mean_fmiss)) + geom_histogram(fill = "dodgerblue1", colour = "black", alpha = 0.3)
+a + theme_light() + annotate("text", x=mean(range(ind_miss2$mean_fmiss)), y=Inf, label="Density plot of sample missingness \n in mGaP2.0 -- by subject", vjust=1.5, size=4) + xlab("fraction missing")
+dev.off()
+```
+
+Calculate allele frequencies
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+#mkdir analyses/mgap2_analyses/freq_biallelic
+for chr in {1..2}; do
+vcftools --gzvcf chr$chr.vcf.gz --freq2 --max-alleles 2 --out analyses/mgap2_analyses/freq_biallelic/$chr; 
+done
+#cd analyses/mgap2_analyses/freq_biallelic
+#find . -name "*.frq" | xargs -n 1 tail -n +2 > maf.txt
+```
+
+Plot allele frequencies
+
+```{r}
+setwd("/Path/to/files/analyses/mgap2_analyses/freq_biallelic")
+library(tidyverse)
+var_freq <- read_delim("maf_biallelic.txt", delim = "\t",
+                       col_names = c("chr", "pos", "nalleles", "nchr", "freq"))
+# find minor allele frequency
+#var_freq$maf <- var_freq %>% select(a1, a2) %>% apply(1, function(z) min(z))
+#summary stats
+summary(var_freq$freq)
+pdf("mGaP - 2.0 - Minor allele frequency distribution.pdf", width = 4, height = 4)
+a <- ggplot(var_freq, aes(freq)) + geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3)
+a + theme_light() + annotate("text", x=mean(range(var_freq$freq)), y=Inf, label="Density plot of allele freq \n in mGaP2.0", vjust=1.5, size=4) + xlab("minor allele freq")
+dev.off()
+```
+
+Calculate inbreeding coefficient (on sample of variants)
+
+```{zsh engine.opts='-i'}
+vcftools --gzvcf chr1.vcf.gz --het --out heterozygosity
+```
+
+Plot inbreeding
+
+```{r}
+ind_het <- read_delim("heterozygosity.het", delim = "\t",
+           col_names = c("ind","ho", "he", "nsites", "f"), skip = 1)
+a <- ggplot(ind_het, aes(f)) + geom_histogram(fill = "dodgerblue1", colour = "black", alpha = 0.3)
+a + theme_light()
+```
+
+
+-----
+Generate QC'd chromosome files
+-----
+
+
+Remove poor quality and low depth snps. Use these newly generated files from this point on. Example given for one chromosome but can automate this in a loop:
+
+```{zsh engine.opts='-i'}
+cd /Path/to/files
+vcftools --gzvcf chr19.vcf.gz \
+--max-missing 0.9 --minQ 30 \
+--min-meanDP 10 --max-meanDP 50  \
+--minDP 10 --maxDP 50 \
+--recode --stdout | gzip -c > \
+chr19_qc.vcf.gz;
+```
