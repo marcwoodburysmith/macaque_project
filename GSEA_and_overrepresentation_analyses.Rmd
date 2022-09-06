@@ -1,0 +1,177 @@
+---
+title: "GSEA and over-representation analyss"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Execute this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+=================================================================
+
+
+Gene set enrichment and over-representation
+
+Visit: https://bioconductor.org/packages/devel/bioc/vignettes/hypeR/inst/doc/hypeR.html
+
+Reload data if necessary (and make certain chromosome is a factor):
+
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library(tidyverse)
+rvis<-read.delim("rvis_results_annotated.csv", sep=",", header=T, stringsAsFactors = F)
+rvis <- rvis %>% mutate(chr = as.numeric(gsub("[a-z]", "", chr)))
+rvis$chr<-as.factor(rvis$chr)
+```
+
+Install libraries if necessary
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("hypeR")
+
+library(hypeR)
+library(dplyr)
+```
+
+RANKED GENE SET ENRICHMENT ANALYSIS
+
+```{r}
+signature<- rvis %>% 
+  dplyr::arrange(rvis) %>%
+  magrittr::use_series(hgnc_symbol) 
+```
+
+
+Need to extract the columns and form gene sets from genes labelled '1' for each disorder to build a genseset file. This is clunky but works. You need to paste the output into a text file and then bring back into R. 
+
+SFARI Genes:
+```{r}
+rvis.sfari_all<- rvis[rvis$sfari_all=="1",]
+rvis.sfari_all<- rvis.sfari_all[, c(1)]
+id.sfari_all<-list("sfari_all" = dput(as.character(rvis.sfari_all)))
+```
+
+ASD:
+```{r}
+rvis.disgenet.asd<- rvis[rvis$asd_disgenet=="1",]
+rvis.disgenet.asd<- rvis.disgenet.asd[, c(1)]
+id.disgenet.asd<-list("disgenet_asd" = dput(as.character(rvis.disgenet.asd)))
+```
+
+Epilepsy:
+```{r}
+rvis.epilepsy<- rvis[rvis$epilepsy=="1"]
+rvis.epilepsy<- rvis.epilepsy[, c(1)]
+id.epi<-list("epilepsy" = dput(as.character(rvis.epilepsy)))
+```
+
+Schizophrenia:
+```{r}
+rvis.sz<- rvis[rvis$sz=="1",]
+rvis.sz<- rvis.sz[, c(1)]
+id.sz<-list("sz" = dput(as.character(rvis.sz)))
+```
+
+Intellectual Disability:
+```{r}
+rvis.disgenet.id<- rvis[rvis$id_disgenet=="1",]
+rvis.disgenet.id<- rvis.disgenet.id[, c(1)]
+id.id_disgenet.id<-list("disgenet_id" = dput(as.character(rvis.disgenet.id)))
+```
+
+NDD:
+```{r}
+rvis.disgenet.ndd<- rvis[rvis$NDD=="1",]
+rvis.disgenet.ndd<- rvis.disgenet.ndd[, c(1)]
+id.id_disgenet.ndd<-list("ndd" = dput(as.character(rvis.disgenet.ndd)))
+```
+
+Import the prepared genesets directly into R console (already prepared as file 'prepared_genesets.txt')
+
+Then run the GSEA:
+
+```{r}
+hyp_gsea_genesets <- hypeR(signature, genesets, test="kstest", fdr=0.05, plotting=TRUE)
+hyp_to_table(hyp_gsea_genesets, file_path= "~/Desktop/gsea_curateddiseases")
+```
+
+And plot (dotplot):
+
+```{r}
+pdf("gsea_genesets.pdf", width=8, height=8)
+hyp_dots(hyp_gsea_genesets, title="GSEA of curated disease")
+dev.off()
+```
+
+Enrichment score plots (example given):
+
+```{r}
+pdf("gsea_asd_disgenet.pdf", width=8, height=8)
+hyp_gsea_genesets$plots[[1]]
+dev.off()
+```
+
+
+GENE SET OVERREPRESENTATION ANALYSIS
+
+Take top 2% constrained genes as described above for scatterplot (remember, a positive RVIS score implies less constrained, and a negative more constrained [i.e. less mutations than predicted]:
+
+
+```{r}
+genes.top<-as.list(rvis.sorted$hgnc_symbol[rvis.sorted$top=="1"])
+dput(as.character(genes.top))
+hyp_obj <- hypeR(signature, genesets, test="hypergeometric", background=18166, fdr=0.01, plotting=TRUE)
+hyp_to_table(hyp_obj, file_path= "~/Desktop/overrepresentation_curateddiseases")
+```
+
+
+Over-representation plots (sort rvis scores, then identify top 2% genes, i.e. 0.02 * 18,166 which is total number of genes included, and then look for the rvis score for the top 0.02 * 18,166 genes which is -1.663118 below):
+
+```{r}
+rvis$top <- "0"
+rvis.sorted<- rvis %>% arrange(rvis)
+rvis.sorted$top[rvis.sorted$rvis<= -1.663118] <- "1"
+```
+
+
+Read in list of genes and turn into list that can be used in idx function below:
+
+```{r}
+list<-read.delim("asdgenes_rvis.txt", header=F, sep="", stringsAsFactors = F)
+cat(paste(shQuote(list), collapse=", "))
+```
+
+Plot:
+
+```{r}
+rvis.sorted$hgnc1<-rvis.sorted$hgnc_symbol
+idx <- rvis.sorted$hgnc1 %in% c(c("CACNA1H", "NOTCH1", "ABCA7", "ARHGEF10", "ERC1", "HERC1", "PRPF8",  "RELN",  "SYNM", "CUX1", "RAI1", "SLC6A3", "SYNE1", "CYFIP1", "PTPRT", "SMARCA4", "CACNA1C","TRPM2", "DPP6", "DEPDC5", "CACNA1B", "MET", "ANK3","THBS1", "CDH8", "ANK2", "TSC2"))
+rvis.sorted$hgnc1[!idx]<- NA
+pdf("scatterplot_asd_annotated.pdf", width=8, height=8)
+ggplot(rvis.sorted, aes(x = total, y = damaging, color = top)) + geom_point(size=0.2) + geom_text(aes(label = hgnc1), size = 2, hjust=0) + annotate("text", x=mean(range(rvis.sorted$total)), y=Inf, label = "Scatterplot illustrating relationship between \n total (X) and damaging (Y) variants annotated for 2% most \n constrained genes with ASD genes labelled", vjust=1.5, size=4) + scale_colour_discrete(labels = c("all other genes", "top 2% constrained"))
+dev.off()
+```
+
+
+===================================================
+
+For information -- other genesets for GSEA or over-representation analysis (see hypeR website):
+
+```{r}
+#msigdb_info()
+KEGG <- msigdb_gsets(species="Homo sapiens", category="C2", subcategory = "CP:KEGG")
+GO.BP <- msigdb_gsets(species="Homo sapiens", category="C5", subcategory = "BP")
+GO.CC <- msigdb_gsets(species="Homo sapiens", category="C5", subcategory = "CC")
+GO.MF <- msigdb_gsets(species="Homo sapiens", category="C5", subcategory = "MF")
+```
+
+
+

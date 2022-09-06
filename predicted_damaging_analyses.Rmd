@@ -1,0 +1,188 @@
+---
+title: "predicted_damaging_analyses"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Execute code by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+============================================================
+
+Prepare mGaP file for GRanges. 
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library("GenomicRanges")
+library(tidyverse)
+library(biomaRt)
+```
+
+
+Need to extract chromosome and co-ordinates from mGAP 'predicted damaging variant' spreadsheet (variantList_2021-06-21_04-32-09.tsv as downloaeded from mGAP website) for variants. As these are SNPs, and GRanges requires a start and end, need to add extra column so you have start and end:
+
+```{bash}
+awk '{FS="\t"}{print $1="chr"$1, $2, $2, $5, $6, $9}' variantList_2021-06-21_04-32-09.tsv | tail -n +2 > genrange_mmul10.txt
+```
+
+
+Read this newly generated file into R and generate GRange object from it:
+
+```{r}
+mgap_var<-read.table("genrange_mmul10.txt", header=F, sep="", col.names=c("chr", "start", "end", "maf", "cadd", "genes"), 
+                  fill=T, stringsAsFactors = F)
+mgap_varrange <- with(mgap_var, GRanges(chr, IRanges(start, end), maf=mgap_var$maf, cadd=mgap_var$cadd, genes=mgap_var$genes))
+```
+
+
+============================================================
+
+1. Identify known disease variants that overlap mGAP predicted damaging variants:
+
+
+Start with the DisGeNET variant file downloadable from https://www.disgenet.org/ . 
+
+This will need some preprocessing to extract chromosome and coordinates columns. Make certain this is correctly sorted first. 
+
+```{bash}
+awk 'BEGIN{FS="\t"}(NR>1){print "chr"$9, $10, $10}' C1510586_disease_vda_summary.tsv | sort -k1,1V -k2,2n  > asd_vda_coords.txt
+```
+
+You can then paste this file into LiftOver: https://genome.ucsc.edu/cgi-bin/hgLiftOver
+
+This generates a new file with the correct macaque coordinates. Make sure you specify hg38 (which is the build used in DisGeNET) and Mmul10. 
+
+This new file then needs to be imported into R and GRanges object created. If you forget to sort your awk generated file you can do this in R with the arrange function in dplyr package (e.g.  file2 <- arrange(file1, chr, start))
+
+```{r}
+asd_vda <- read.delim("hglft_genome.bed", header = F, sep="", stringsAsFactors = F)  #or header=F
+
+names(asd_vda)[names(asd_vda)=="V1"]<-"chr"
+names(asd_vda)[names(asd_vda)=="V2"]<-"start"
+names(asd_vda)[names(asd_vda)=="V3"]<-"end"
+asd_vda_grange<-with(asd_vda, GRanges(chr, IRanges(start, end)))
+```
+
+
+Then look for intersection
+
+```{r}
+hts<-findOverlaps(asd_vda_grange, mgap_varrange)
+
+my_query<-queryHits(hts)
+my_subject<- subjectHits(hts)
+
+hts.df<-data.frame(query=asd_vda_grange[my_query], 
+           subject=mgap_varrange[my_subject]$genes)
+
+write.table(hts.df, file="asd_variant_hts.txt", row.names=F, col.names=T, sep="\t", quote=F)
+```
+
+=======================================================================
+
+2. Identify predicted damaging variants that overlap ASD/ID/epilepsy/sz/NDD genes
+
+Start with list of genes, for example SZ DisGeNET genes. These lists are in the 'gene_lists' subfolder. Need to just extract gene names from these gene lists because you will be looking up co-ordinates in biomaRt:
+
+
+```{bash}
+awk 'BEGIN{FS=","}{print $1}' gene_lists/sz_disgenet.txt | tail -n +2 > sz_disgenet_genes.txt
+```
+
+For other disorders, similarly:
+
+awk 'BEGIN{FS="\t"}{print $1}' gene_lists/asd_disgenet.txt | tail -n +2 > asd_disgenet_genes.txt
+awk 'BEGIN{FS="\t"}{print $1}' gene_lists/id_disgenet.txt | tail -n +2 > id_disgenet_genes.txt
+awk 'BEGIN{FS=","}{print $1}' gene_lists/epilepsy_disgenet.txt | tail -n +2 > epilepsy_disgenet_genes.txt
+awk -F , 'BEGIN{FS=","}{print $2}' gene_lists/SFARI-asd-genes.csv | tail -n +2 > sfari_disgenet_genes.txt
+
+
+You will need to generate a list of genes in the form c("SHANK3", "SHANK2"). This is how I do it:
+
+```{r}
+file<-"sz_disgenet_genes.txt" #change name accordingly
+TEMP<-scan(file, what="") 
+filterList<-dput(TEMP)
+```
+
+You then need to copy and paste this list into R console after the words 'filterList <-' 
+
+This list is then available for biomaRt analysis. 
+
+Set up biomaRt query:
+
+
+```{r}
+mart<-useMart("ensembl", host="http://nov2020.archive.ensembl.org", dataset="mmulatta_gene_ensembl")
+#attribute.list = listAttributes(mart) #to get list of available attributes
+#filter.list = listFilters(mart) #to get list of available filters
+attributes<-c("ensembl_gene_id", "hgnc_symbol", "hgnc_id", "external_gene_name", "chromosome_name",
+              "start_position", "end_position")
+filters<-c("external_gene_name") #hgnc_symbol is not well annotated in feb2021 archive.
+#filters<-c("hgnc_symbol")
+```
+
+
+##################################################
+Other biomaRt commands just for information:
+listEnsemblArchives()
+mart<-useMart("ensembl", host="http://feb2021.archive.ensembl.org")
+listDatasets(mart)
+mart<-useMart("ensembl", host="http://jan2019.archive.ensembl.org", dataset="mmulatta_gene_ensembl")
+next thing does pretty much same thing
+mart <- useEnsembl(biomart = "ensembl", dataset ="mmulatta_gene_ensembl", version = "93")
+###################################################
+
+The idea is to filter by gene name, so you end up with biomaRt generated co-ordinate file for just those genes you are interested in. These genes will be those from, for example, DisGeNET or SFARI
+
+```{r}
+results<-getBM(attributes=attributes, filters=filters, values=filterList, mart=mart)
+results$chromosome_name <- gsub("^", "chr", results$chromosome_name)
+results<- results[, c(5, 6, 7, 1, 4)] 
+results<-arrange(results, chromosome_name, start_position) #might need to sort
+names(results)[names(results)=="chromosome_name"]<-"chr"
+names(results)[names(results)=="start_position"]<-"start"
+names(results)[names(results)=="end_position"]<-"end"
+write.table(results, file="overlap_mmul10.txt", col.names=T, row.names=F, sep="\t", quote=F)
+```
+
+
+Make GRange object
+
+```{r}
+results_grange<-with(results, GRanges(chr, IRanges(start, end), ens=results$ensembl_gene_id, gene=results$external_gene_name))
+```
+
+
+
+Then look for intersection
+
+```{r}
+hts<-findOverlaps(results_grange, mgap_varrange)
+
+my_query<-queryHits(hts)
+my_subject<- subjectHits(hts)
+
+hts.df<-data.frame(query=results_grange[my_query]$gene, 
+           subject=mgap_varrange[my_subject])
+write.table(hts.df, file="overlap_hts.txt", row.names=F, col.names=T, sep="\t", quote=F)
+```
+
+Other code for information:
+
+
+#subset
+subsetByOverlaps(mgap_varrange, sfari_grange)
+
+#countOverlaps(mgap_varrange, sfari_grange)
+intersect(mgap_varrange, sfari_grange) #doesn't work...need to figure this out. 
+
+###################
+my_overlaps<- findOverlaps(query=bed2, subject=bed)
+
+#you can count the number of genes by:
+hts.df$subject<-as.factor(hts.df$subject)
+hts.df %>% group_by(subject) %>% summarize(no_rows=length(subject))
+
+median(hts.df$query.maf, na.rm=T)
+

@@ -1,0 +1,265 @@
+---
+title: "generateRVIS"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and p
+
+=============================================================
+
+Set up path, directories etc:
+
+```{r}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+dir.create(file.path("rvis"))
+library(tidyverse)
+options(tibble.width = Inf) 
+options(tibble.print_max = Inf) 
+```
+
+Starting with the QC'd vcf files, generate tables of frequencies of different types of variant on gene-by-gene basis: 
+
+```{zsh engine.opts='-i'}
+for num in {1..20}; 
+do bcftools view -G -e 'INFO/AF < 0.01 | INFO/ANN ~ "intergenic_region" ' -Ov chr$chr.vcf.gz | grep -v '^#' | awk -F '|' 'BEGIN{SUBSEP=OFS=FS} {a[$2, $4]++}END {for (i in a) print i, a[i]}' > results$num.txt;
+done
+```
+
+Add chromosome column to each one (which can be automated with the above):
+
+```{zsh engine.opts='-i'}
+awk -F '|' -v OFS="\t" '{$(NF+1) = "chrX"; print}'  results$num.txt > results$num.txt 
+```
+
+Process these files in R -- these are step by step instructions for illustrative purposes. Further below is a block of text to automate this in a loop.
+
+Setup:
+
+```{r}
+#only files to modify
+results <-"results1.txt" #modify for each chromosome
+outfile <- "rvis/rvis1.txt" #modify for each chromosome
+```
+
+
+```{r}
+results<-read_tsv(results, col_names=F)
+results<-results %>% pivot_wider(names_from = X1, values_from = X3)
+results[is.na(results)]<- 0
+```
+
+This produces a tibble.
+
+
+Next you want to combine all the rows with nonsynonymous mutations. These include missense mutations and all mutation types annotated in SnpEff as HIGH or MODERATE impact:
+
+```{r}
+``{r}
+results<-results %>% mutate(damaging = rowSums(select(., contains(c("stop_lost", "stop_gained", "splice_acceptor", "splice_donor", "missense", "frameshift", "start_lost", "start_gained", "missense", "splice_region", "disruptive_inframe", "coding_sequence", "conservative_inframe")))))
+```
+
+Remove genes with neither synonymous nor nonsynonymous variants (uninformative):
+
+```{r}
+results<-results[!(results$synonymous_variant == 0 & results$damaging == 0), ]
+```
+
+When calculating ratio of damaging to synonymous variants, those variants with 0 damaging (non-synonymous) will generate a ratio of 0 which is fine. However, to avoid dividing by 0 (and generating 'inf' in R), add 1 to all values in synonymous variant column:
+
+```{r}
+results$synonymous_variant <- results$synonymous_variant + 1
+```
+
+Now generate damaging (i.e.nonsynonymous/synonymous ratio) and total variants per gene:
+
+```{r}
+results<-results %>% mutate(ratio=damaging/synonymous_variant)
+results$total<- results$synonymous_variant + results$damaging
+```
+
+Next, label columns:
+
+```{r}
+names(results)[names(results)=="X2"]<- "hgnc_symbol"
+names(results)[names(results)=="X4"]<- "chr"
+```
+
+Next, you need to add gene lengths to this table. First import the gff file and add column names and calculate new row of gene lengths:
+
+```{r}
+macaca_genes<-read.delim("macaca_build10.gff", header=F, sep="\t", stringsAsFactors = F)
+names(macaca_genes)[names(macaca_genes)=="V5"]<- "hgnc_symbol"
+names(macaca_genes)[names(macaca_genes)=="V1"]<- "chr"
+names(macaca_genes)[names(macaca_genes)=="V2"]<- "start"
+names(macaca_genes)[names(macaca_genes)=="V3"]<- "end"
+names(macaca_genes)[names(macaca_genes)=="V4"]<- "ncbi_id"
+macaca_genes$length<-macaca_genes$end - macaca_genes$start
+```
+
+Extract genes on chromosome:
+
+```{r}
+transcript <- macaca_genes[macaca_genes$chr=="1",] 
+```
+
+Merge:
+
+```{r}
+results<-merge(results, transcript, by="hgnc_symbol", all.X=T, all.y=F)
+```
+
+Extract relevant columns:
+
+```{r}
+results <- results[, c("hgnc_symbol", "chr.x", "synonymous_variant", "damaging", "ratio", "total", "start", "end", "length")]
+```
+
+Save:
+
+```{r}
+write_csv(results, file = outfile, col_names=T)
+```
+
+Automated version of above code:
+
+```{r}
+macaca_genes<-read.delim("macaca_build10.gff", header=F, sep="\t", stringsAsFactors = F)
+names(macaca_genes)[names(macaca_genes)=="V5"]<- "hgnc_symbol"
+names(macaca_genes)[names(macaca_genes)=="V1"]<- "chr"
+names(macaca_genes)[names(macaca_genes)=="V2"]<- "start"
+names(macaca_genes)[names(macaca_genes)=="V3"]<- "end"
+names(macaca_genes)[names(macaca_genes)=="V4"]<- "ncbi_id"
+macaca_genes$length<-macaca_genes$end - macaca_genes$start
+
+files <- list.files(path="/path/to/files", pattern="*.txt", full.names=TRUE)
+the_dir<- "/path/to/dir"
+for (file in files){
+	results<-read_tsv(file, col_names=F)
+	results<-results %>% pivot_wider(names_from = X1, values_from = X3)
+results[is.na(results)]<- 0
+
+results<-results %>% mutate(damaging = rowSums(select(., contains(c("stop_lost", "stop_gained", "splice_acceptor", "splice_donor", "missense", "frameshift", "start_lost", "start_gained", "missense", "splice_region", "disruptive_inframe", "coding_sequence", "conservative_inframe")))))
+
+results<-results[!(results$synonymous_variant == 0 & results$damaging == 0), ]
+
+results$synonymous_variant <- results$synonymous_variant + 1
+
+results<-results %>% mutate(ratio=damaging/synonymous_variant)
+results$total<- results$synonymous_variant + results$damaging
+
+names(results)[names(results)=="X2"]<- "hgnc_symbol"
+names(results)[names(results)=="X4"]<- "chr"
+
+results<-merge(results, macaca_genes, by="hgnc_symbol", all.X=T, all.y=F)
+
+results <- results[, c("hgnc_symbol", "chr.x", "synonymous_variant", "damaging", "ratio", "total", "start", "end", "length")]
+
+write_csv(results, file= paste0(the_dir, "/", basename(file)), col_names=T)
+}
+```
+
+Finally calculate rvis scores. First combine all files generated above into one:
+
+```{r}
+files  <- list.files(pattern = '\\.txt')
+tables <- lapply(files, read.csv, header = TRUE)
+combined <- do.call(rbind, tables)
+#write_csv(combined, file="combined.txt", col_names=T)
+#combined<-read_csv("combined.txt", col_names = T)
+lm.r = lm(damaging ~ total, data=combined)
+summary(lm.r)
+#coef(lm.r) # gives the model’s coefficients
+#fitted(lm.r) # gives the predicted values for Y, i.e.  the expected burden of missense mutations
+#resid(lm.r) # gives the residual errors in Y
+#coef(lm.r) # gives the model’s coefficients
+  
+#layout(matrix(1:4,2,2))
+#plot(lm.r)
+  
+#add residuals and fitted values to combined data frame
+combined$resid<-resid(lm.r)
+combined$fitted<-fitted(lm.r)
+  
+#generate column of studentized residuals -- the rvis score
+sd(combined$resid)
+combined$rvis <- combined$resid/3.239
+  
+#save this data.frame
+write_csv(combined, file="rvis-results.txt", col_names=T)
+```
+
+
+Note: Positive RVIS scores indicate that there are a greater number of damaging variants than expected -- presumably the gene is tolerant of mutations. And vice versa for negative RVIS scores. 
+
+You now need to add extra columns to earmark disorder specific genes:
+
+```{r}
+# read in the file you have generated
+rvis<-read.csv("rvis/rvis-results.txt", header=T)
+
+#read in list of SFARI genes
+sfari.asd<-read.delim("/path/to/files/SFARI-asd-genes.csv", header=T, sep=",", stringsAsFactors = F)
+names(sfari.asd)[names(sfari.asd)=="gene.symbol"]<-"hgnc_symbol" 
+sfari.all<- sfari.asd[, c(2,5)]
+sfari.all$sfari_all<-"1"
+rvis<-merge(sfari.all, rvis, by="hgnc_symbol", all.x=F, all.y=T)
+rvis$sfari_all[is.na(rvis$sfari_all)]<-0
+names(rvis)[names(rvis)=="chr.x"]<-"chr"
+rvis <- rvis %>% select(-contains(c('chrom', 'ensemb'))) #tidying up
+```
+
+
+Identical process for other gene sets:
+
+```{r}
+epilepsy_disgenet<-read.delim("/path/to/files/epilepsy_disgenet.txt", sep=",", header=T, stringsAsFactors=F)
+epilepsy_disgenet$epilepsy<-"1"
+epilepsy<-epilepsy_disgenet[, c(1, 4)]
+names(epilepsy)[names(epilepsy)=="Gene"]<-"hgnc_symbol"
+rvis<-merge(rvis, epilepsy, by="hgnc_symbol", all.x=T, all.y=F)
+rvis$epilepsy[is.na(rvis$epilepsy)]<-0
+
+asd_disgenet<-read.delim("/path/to/files/asd_disgenet.txt", sep="\t", header=T, stringsAsFactors=F)
+asd_disgenet$asd_disgenet<-"1"
+asd<-asd_disgenet[, c(1, 4)]
+names(asd)[names(asd)=="Gene"]<-"hgnc_symbol"
+rvis<-merge(rvis, asd, by="hgnc_symbol", all.x=T, all.y=F)
+rvis$asd_disgenet[is.na(rvis$asd_disgenet)]<-0
+  
+id_disgenet<-read.delim("path/to/files/id_disgenet.txt", sep="\t", header=T, stringsAsFactors=F)
+id_disgenet$id_disgenet<-"1"
+id<-id_disgenet[, c(1, 4)]
+names(id)[names(id)=="Gene"]<-"hgnc_symbol"
+rvis<-merge(rvis, id, by="hgnc_symbol", all.x=T, all.y=F)
+rvis$id_disgenet[is.na(rvis$id_disgenet)]<-0
+ 
+sz_disgenet<-read.delim("/path/to/files/sz_disgenet.txt", sep=",", header=T, stringsAsFactors=F)
+sz_disgenet$sz<-"1"
+sz<-sz_disgenet[, c(1, 4)]
+names(sz)[names(sz)=="Gene"]<-"hgnc_symbol"
+rvis<-merge(rvis, sz, by="hgnc_symbol", all.x=T, all.y=F)
+rvis$sz[is.na(rvis$sz)]<-0
+```
+
+And for NDD genes: these are genes that overlap all disorders (note the need to convert the chr column)
+
+```{r}
+rvis <- rvis %>% mutate(chr = as.numeric(gsub("[a-z]", "", chr)))
+rvis$chr<-as.factor(rvis$chr)
+
+rvis$NDD<-ifelse(rvis$epilepsy==1 & rvis$asd_disgenet==1 & rvis$id_disgenet == 1 & rvis$sz == 1, 1, 0)
+rvis$NDD<-as.factor(rvis$NDD)
+
+# for some summary stats. 
+# tapply(rvis$rvis, rvis$NDD, summary) 
+```
+
+
+Save this file. All subsequent analyses are performed using this file:
+
+```{r}
+write_csv(rvis, file="rvis_results_annotated.csv", col_names=TRUE)
+```
+

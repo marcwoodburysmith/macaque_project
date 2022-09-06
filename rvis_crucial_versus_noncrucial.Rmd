@@ -1,0 +1,74 @@
+---
+title: "RVIS crucial v non-crucial genes"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Execute code by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+===================================================================
+
+
+
+
+```{r}
+rvis<-read.delim("rvis_results_annotated.csv", sep=",", header=T, stringsAsFactors = F)
+rvis <- rvis %>% mutate(chr = as.numeric(gsub("[a-z]", "", chr)))
+rvis$chr<-as.factor(rvis$chr)
+rvis<-rvis[rvis$rvis < 11 , ]
+rvis$top <- "0"
+rvis.sorted<- rvis %>% arrange(rvis)
+rvis.sorted$top[rvis.sorted$rvis<= -1.663118] <- "1"
+```
+
+
+```{r}
+blomen.crucial<-read.delim("Blomen_2015_science_coreessentialome.csv", header=F, sep=",", stringsAsFactors = F)
+names(blomen.crucial)[names(blomen.crucial)=="V1"]<- "hgnc_symbol"
+blomen.crucial$blomen_crucial<-"1"
+rvis<-merge(blomen.crucial, rvis, by="hgnc_symbol", all.x=F, all.y=T)
+rvis$blomen_crucial[is.na(rvis$blomen_crucial)]<-"0"
+rvis$blomen_crucial<-as.factor(rvis$blomen_crucial)
+```
+
+
+```{r}
+model.blomen <- glm(blomen_crucial ~ rvis, family=binomial(link='logit'), data=rvis)
+#model.blomen <- glm(blomen_crucial ~ rvis, family=binomial, data=rvis)
+```
+
+
+```{r}
+summary(model.blomen)
+```
+
+
+
+```{r}
+godini.crucial<-read.delim("Godini_2015_essentialgenes.csv", header=F, sep=",", stringsAsFactors = F)
+names(godini.crucial)[names(godini.crucial)=="V1"]<- "hgnc_symbol"
+godini.crucial$godini_crucial<-"1"
+rvis<-merge(godini.crucial, rvis, by="hgnc_symbol", all.x=F, all.y=T)
+rvis$godini_crucial[is.na(rvis$godini_crucial)]<-"0"
+rvis$godini_crucial<-as.factor(rvis$godini_crucial)
+```
+
+Now for logistic regression analyses
+
+```{r}
+model.godini <- glm(godini_crucial ~ rvis, family=binomial(link='logit'), data=rvis)
+#model.godini <- glm(godini_crucial ~ rvis, family=binomial, data=rvis)
+```
+
+
+```{r}
+# summary(model.godini)
+sink("model.godini.txt")
+print(summary(model.godini))
+sink()
+```
+
+
+
+
+

@@ -1,0 +1,52 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+----------------------------------------------------------------------------------
+
+Load the macaque rvis file and then human rvis file (from Petrovski paper: journal.pgen.1003709.s002) (NEED TO ADD CORRECT PATH TO FILES. On OneDrive: NHP Manuscript/Analyses2022JUL/results_wo_indels/rvis/rvis_human_vs_macaque):
+
+```{r}
+setwd("/path/to/files/results_wo_indels/rvis/rvis_human_vs_macaque/")
+
+library(tidyverse)
+
+rvis_macaque<-read.delim("rvis_results_annotated.csv", header=T, sep=",", stringsAsFactors = F)
+rvis_human<-read.delim("journal.pgen.1003709.s002.csv", header=T, sep=",", stringsAsFactors = F)
+head(rvis_macaque)
+head(rvis_human)
+
+```
+
+Make sure the column names are correct:
+
+```{r}
+names(rvis_human)[names(rvis_human)=="Residual.Variation.Intolerance.Score"]<-"rvis_human"
+names(rvis_human)[names(rvis_human)=="HGNC.gene"]<-"hgnc_symbol"
+rvis_macaque2<-rvis_macaque[, c(1, 16, 17, 18, 19, 20, 2)]
+rvis.macaque.human<-merge(rvis_macaque2, rvis_human, by="hgnc_symbol", all.x=T, all.y=F)
+
+
+```
+
+Run correlation (can alternatively choose Spearman):
+
+```{r}
+cor.test(rvis.macaque.human$rvis_human, rvis.macaque.human$rvis, method = "pearson")
+```
+
+Basic plot:
+
+```{r}
+ggplot(rvis.macaque.human, aes(x=rvis, y=rvis_human)) + geom_point() + ggtitle("Correlation between human and macaque rvis scores") + labs(x = "macaque rvis", y = "human rvis")
+```
+
+
+

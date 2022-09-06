@@ -1,0 +1,62 @@
+---
+title: "Compare RVIS scores by disorder"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Execute code by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+==============================================================
+
+
+```{r}
+model.asd<-glm(asd_disgenet ~ rvis, family=binomial(link="logit"), data=rvis)
+model.id<-glm(id_disgenet ~ rvis, family=binomial(link="logit"), data=rvis)
+model.sz<-glm(sz ~ rvis, family=binomial(link="logit"), data=rvis)
+model.epilepsy<-glm(epilepsy ~ rvis, family=binomial(link="logit"), data=rvis)
+model.asd.sfari.all<-glm(sfari_all ~ rvis, family=binomial(link="logit"), data=rvis)
+```
+
+
+output results to Console:
+
+```{r}
+summary(model.godini)
+summary(model.asd)
+summary(model.id)
+summary(model.sz)
+summary(model.epilepsy)
+summary(model.asd.sfari.all)
+```
+
+Or/and save direct to file:
+
+```{r}
+#sink("model.blomen.txt")
+#print(summary(model.blomen))
+#sink("model.godini.txt")
+#print(summary(model.godini))
+
+sink("model.asd.txt")
+print(summary(model.asd))
+sink("model.id.txt")
+print(summary(model.id))
+sink("model.sz.txt")
+print(summary(model.sz))
+sink("model.epilepsy.txt")
+print(summary(model.epilepsy))
+sink("model.asd.sfari.all.txt")
+print(summary(model.asd.sfari.all))
+
+sink() # to return to the Console
+```
+
+Should you want to re-import the data into R but still want to have it in a text file, there is also dput, e.g.,
+
+```{r}
+dput(summary(lm(cars$speed~cars$dist)),file="summary_lm.txt",control="all")
+
+#and then reimport with: res=dget("summary_lm.txt")
+```
+
