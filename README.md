@@ -1,5 +1,6 @@
 # macaque_project
 
+
 Code used for all stages of mGaP data analysis. 
 
 1. vcfPREP - Preparation of QC'd vcf files.
