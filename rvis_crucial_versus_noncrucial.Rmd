@@ -21,6 +21,7 @@ rvis.sorted<- rvis %>% arrange(rvis)
 rvis.sorted$top[rvis.sorted$rvis<= -1.663118] <- "1"
 ```
 
+Analysis with Blomen et al. data:
 
 ```{r}
 blomen.crucial<-read.delim("Blomen_2015_science_coreessentialome.csv", header=F, sep=",", stringsAsFactors = F)
@@ -31,6 +32,7 @@ rvis$blomen_crucial[is.na(rvis$blomen_crucial)]<-"0"
 rvis$blomen_crucial<-as.factor(rvis$blomen_crucial)
 ```
 
+Logistic regression analyses:
 
 ```{r}
 model.blomen <- glm(blomen_crucial ~ rvis, family=binomial(link='logit'), data=rvis)
@@ -42,7 +44,7 @@ model.blomen <- glm(blomen_crucial ~ rvis, family=binomial(link='logit'), data=r
 summary(model.blomen)
 ```
 
-
+Analysis with Godini et al. data:
 
 ```{r}
 godini.crucial<-read.delim("Godini_2015_essentialgenes.csv", header=F, sep=",", stringsAsFactors = F)
@@ -53,7 +55,7 @@ rvis$godini_crucial[is.na(rvis$godini_crucial)]<-"0"
 rvis$godini_crucial<-as.factor(rvis$godini_crucial)
 ```
 
-Now for logistic regression analyses
+Logistic regression analyses:
 
 ```{r}
 model.godini <- glm(godini_crucial ~ rvis, family=binomial(link='logit'), data=rvis)

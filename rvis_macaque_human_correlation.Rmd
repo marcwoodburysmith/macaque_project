@@ -18,10 +18,11 @@ setwd("/path/to/files/results_wo_indels/rvis/rvis_human_vs_macaque/")
 
 library(tidyverse)
 
-rvis_macaque<-read.delim("rvis_results_annotated.csv", header=T, sep=",", stringsAsFactors = F)
+rvis<-read.delim("rvis_results_annotated.csv", header=T, sep=",", stringsAsFactors = F)
 rvis_human<-read.delim("journal.pgen.1003709.s002.csv", header=T, sep=",", stringsAsFactors = F)
-head(rvis_macaque)
-head(rvis_human)
+rvis <- rvis %>% mutate(chr = as.numeric(gsub("[a-z]", "", chr)))
+rvis$chr<-as.factor(rvis$chr)
+rvis<-rvis[rvis$rvis < 11 , ]
 
 ```
 
@@ -30,8 +31,8 @@ Make sure the column names are correct:
 ```{r}
 names(rvis_human)[names(rvis_human)=="Residual.Variation.Intolerance.Score"]<-"rvis_human"
 names(rvis_human)[names(rvis_human)=="HGNC.gene"]<-"hgnc_symbol"
-rvis_macaque2<-rvis_macaque[, c(1, 16, 17, 18, 19, 20, 2)]
-rvis.macaque.human<-merge(rvis_macaque2, rvis_human, by="hgnc_symbol", all.x=T, all.y=F)
+rvis_macaque<-rvis[, c(1, 16, 17, 18, 19, 20, 2)]
+rvis.macaque.human<-merge(rvis_macaque, rvis_human, by="hgnc_symbol", all.x=T, all.y=F)
 
 
 ```

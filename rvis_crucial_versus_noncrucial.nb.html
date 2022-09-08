@@ -1777,79 +1777,116 @@ by placing your cursor inside it and pressing
 <em>Ctrl+Shift+Enter</em>.</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucnZpczwtcmVhZC5kZWxpbShcInJ2aXNfcmVzdWx0c19hbm5vdGF0ZWQuY3N2XCIsIHNlcD1cIixcIiwgaGVhZGVyPVQsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKVxucnZpcyA8LSBydmlzICU+JSBtdXRhdGUoY2hyID0gYXMubnVtZXJpYyhnc3ViKFwiW2Etel1cIiwgXCJcIiwgY2hyKSkpXG5ydmlzJGNocjwtYXMuZmFjdG9yKHJ2aXMkY2hyKVxucnZpczwtcnZpc1tydmlzJHJ2aXMgPCAxMSAsIF1cbnJ2aXMkdG9wIDwtIFwiMFwiXG5ydmlzLnNvcnRlZDwtIHJ2aXMgJT4lIGFycmFuZ2UocnZpcylcbnJ2aXMuc29ydGVkJHRvcFtydmlzLnNvcnRlZCRydmlzPD0gLTEuNjYzMTE4XSA8LSBcIjFcIlxuYGBgIn0= -->
-<pre class="r"><code>rvis&lt;-read.delim(&quot;rvis_results_annotated.csv&quot;, sep=&quot;,&quot;, header=T, stringsAsFactors = F)
-rvis &lt;- rvis %&gt;% mutate(chr = as.numeric(gsub(&quot;[a-z]&quot;, &quot;&quot;, chr)))
-rvis$chr&lt;-as.factor(rvis$chr)
-rvis&lt;-rvis[rvis$rvis &lt; 11 , ]
-rvis$top &lt;- &quot;0&quot;
-rvis.sorted&lt;- rvis %&gt;% arrange(rvis)
-rvis.sorted$top[rvis.sorted$rvis&lt;= -1.663118] &lt;- &quot;1&quot;</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucnZpczwtcmVhZC5kZWxpbShcXHJ2aXNfcmVzdWx0c19hbm5vdGF0ZWQuY3N2XFwsIHNlcD1cXFxuYGBgIn0= -->
+<pre class="r"><code>```r
+rvis&lt;-read.delim(\rvis_results_annotated.csv\, sep=\</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Analysis with Blomen et al. data:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmxvbWVuLmNydWNpYWw8LXJlYWQuZGVsaW0oXCJCbG9tZW5fMjAxNV9zY2llbmNlX2NvcmVlc3NlbnRpYWxvbWUuY3N2XCIsIGhlYWRlcj1GLCBzZXA9XCIsXCIsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKVxubmFtZXMoYmxvbWVuLmNydWNpYWwpW25hbWVzKGJsb21lbi5jcnVjaWFsKT09XCJWMVwiXTwtIFwiaGduY19zeW1ib2xcIlxuYmxvbWVuLmNydWNpYWwkYmxvbWVuX2NydWNpYWw8LVwiMVwiXG5ydmlzPC1tZXJnZShibG9tZW4uY3J1Y2lhbCwgcnZpcywgYnk9XCJoZ25jX3N5bWJvbFwiLCBhbGwueD1GLCBhbGwueT1UKVxucnZpcyRibG9tZW5fY3J1Y2lhbFtpcy5uYShydmlzJGJsb21lbl9jcnVjaWFsKV08LVwiMFwiXG5ydmlzJGJsb21lbl9jcnVjaWFsPC1hcy5mYWN0b3IocnZpcyRibG9tZW5fY3J1Y2lhbClcbmBgYCJ9 -->
-<pre class="r"><code>blomen.crucial&lt;-read.delim(&quot;Blomen_2015_science_coreessentialome.csv&quot;, header=F, sep=&quot;,&quot;, stringsAsFactors = F)
-names(blomen.crucial)[names(blomen.crucial)==&quot;V1&quot;]&lt;- &quot;hgnc_symbol&quot;
-blomen.crucial$blomen_crucial&lt;-&quot;1&quot;
-rvis&lt;-merge(blomen.crucial, rvis, by=&quot;hgnc_symbol&quot;, all.x=F, all.y=T)
-rvis$blomen_crucial[is.na(rvis$blomen_crucial)]&lt;-&quot;0&quot;
-rvis$blomen_crucial&lt;-as.factor(rvis$blomen_crucial)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYmxvbWVuLmNydWNpYWw8LXJlYWQuZGVsaW0oXFxCbG9tZW5fMjAxNV9zY2llbmNlX2NvcmVlc3NlbnRpYWxvbWUuY3N2XFwsIGhlYWRlcj1GLCBzZXA9XFxcbmBgYCJ9 -->
+<pre class="r"><code>```r
+blomen.crucial&lt;-read.delim(\Blomen_2015_science_coreessentialome.csv\, header=F, sep=\</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Logistic regression analyses:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbChsaW5rPSdsb2dpdCcpLCBkYXRhPXJ2aXMpXG4jbW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbCwgZGF0YT1ydmlzKVxuYGBgIn0= -->
-<pre class="r"><code>model.blomen &lt;- glm(blomen_crucial ~ rvis, family=binomial(link=&#39;logit&#39;), data=rvis)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbChsaW5rPSdsb2dpdCcpLCBkYXRhPXJ2aXMpXG4jbW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbCwgZGF0YT1ydmlzKVxuYGBgXG5gYGAifQ== -->
+<pre class="r"><code>```r
+model.blomen &lt;- glm(blomen_crucial ~ rvis, family=binomial(link=&#39;logit&#39;), data=rvis)
 #model.blomen &lt;- glm(blomen_crucial ~ rvis, family=binomial, data=rvis)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc3VtbWFyeShtb2RlbC5ibG9tZW4pXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+summary(model.blomen)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Analysis with Godini et al. data:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ29kaW5pLmNydWNpYWw8LXJlYWQuZGVsaW0oXFxHb2RpbmlfMjAxNV9lc3NlbnRpYWxnZW5lcy5jc3ZcXCwgaGVhZGVyPUYsIHNlcD1cXFxuYGBgIn0= --&gt;
+
+```r
+```r
+godini.crucial&lt;-read.delim(\Godini_2015_essentialgenes.csv\, header=F, sep=\</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Logistic regression analyses:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShtb2RlbC5ibG9tZW4pXG5gYGAifQ== -->
-<pre class="r"><code>summary(model.blomen)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ29kaW5pLmNydWNpYWw8LXJlYWQuZGVsaW0oXCJHb2RpbmlfMjAxNV9lc3NlbnRpYWxnZW5lcy5jc3ZcIiwgaGVhZGVyPUYsIHNlcD1cIixcIiwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5uYW1lcyhnb2RpbmkuY3J1Y2lhbClbbmFtZXMoZ29kaW5pLmNydWNpYWwpPT1cIlYxXCJdPC0gXCJoZ25jX3N5bWJvbFwiXG5nb2RpbmkuY3J1Y2lhbCRnb2RpbmlfY3J1Y2lhbDwtXCIxXCJcbnJ2aXM8LW1lcmdlKGdvZGluaS5jcnVjaWFsLCBydmlzLCBieT1cImhnbmNfc3ltYm9sXCIsIGFsbC54PUYsIGFsbC55PVQpXG5ydmlzJGdvZGluaV9jcnVjaWFsW2lzLm5hKHJ2aXMkZ29kaW5pX2NydWNpYWwpXTwtXCIwXCJcbnJ2aXMkZ29kaW5pX2NydWNpYWw8LWFzLmZhY3RvcihydmlzJGdvZGluaV9jcnVjaWFsKVxuYGBgIn0= -->
-<pre class="r"><code>godini.crucial&lt;-read.delim(&quot;Godini_2015_essentialgenes.csv&quot;, header=F, sep=&quot;,&quot;, stringsAsFactors = F)
-names(godini.crucial)[names(godini.crucial)==&quot;V1&quot;]&lt;- &quot;hgnc_symbol&quot;
-godini.crucial$godini_crucial&lt;-&quot;1&quot;
-rvis&lt;-merge(godini.crucial, rvis, by=&quot;hgnc_symbol&quot;, all.x=F, all.y=T)
-rvis$godini_crucial[is.na(rvis$godini_crucial)]&lt;-&quot;0&quot;
-rvis$godini_crucial&lt;-as.factor(rvis$godini_crucial)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now for logistic regression analyses</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9kZWwuZ29kaW5pIDwtIGdsbShnb2RpbmlfY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbChsaW5rPSdsb2dpdCcpLCBkYXRhPXJ2aXMpXG4jbW9kZWwuZ29kaW5pIDwtIGdsbShnb2RpbmlfY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbCwgZGF0YT1ydmlzKVxuYGBgIn0= -->
-<pre class="r"><code>model.godini &lt;- glm(godini_crucial ~ rvis, family=binomial(link=&#39;logit&#39;), data=rvis)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubW9kZWwuZ29kaW5pIDwtIGdsbShnb2RpbmlfY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbChsaW5rPSdsb2dpdCcpLCBkYXRhPXJ2aXMpXG4jbW9kZWwuZ29kaW5pIDwtIGdsbShnb2RpbmlfY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbCwgZGF0YT1ydmlzKVxuYGBgXG5gYGAifQ== -->
+<pre class="r"><code>```r
+model.godini &lt;- glm(godini_crucial ~ rvis, family=binomial(link=&#39;logit&#39;), data=rvis)
 #model.godini &lt;- glm(godini_crucial ~ rvis, family=binomial, data=rvis)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBzdW1tYXJ5KG1vZGVsLmdvZGluaSlcbnNpbmsoXCJtb2RlbC5nb2RpbmkudHh0XCIpXG5wcmludChzdW1tYXJ5KG1vZGVsLmdvZGluaSkpXG5zaW5rKClcbmBgYCJ9 -->
-<pre class="r"><code># summary(model.godini)
-sink(&quot;model.godini.txt&quot;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBzdW1tYXJ5KG1vZGVsLmdvZGluaSlcbnNpbmsoXFxtb2RlbC5nb2RpbmkudHh0XFwpXG5wcmludChzdW1tYXJ5KG1vZGVsLmdvZGluaSkpXG5zaW5rKClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+# summary(model.godini)
+sink(\model.godini.txt\)
 print(summary(model.godini))
 sink()</code></pre>
+<p>```</p>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlJWSVMgY3J1Y2lhbCB2IG5vbi1jcnVjaWFsIGdlbmVzIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KVGhpcyBpcyBhbiBbUiBNYXJrZG93bl0oaHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbSkgTm90ZWJvb2suIFdoZW4geW91IGV4ZWN1dGUgY29kZSB3aXRoaW4gdGhlIG5vdGVib29rLCB0aGUgcmVzdWx0cyBhcHBlYXIgYmVuZWF0aCB0aGUgY29kZS4gDQoNCkV4ZWN1dGUgY29kZSBieSBjbGlja2luZyB0aGUgKlJ1biogYnV0dG9uIHdpdGhpbiB0aGUgY2h1bmsgb3IgYnkgcGxhY2luZyB5b3VyIGN1cnNvciBpbnNpZGUgaXQgYW5kIHByZXNzaW5nICpDdHJsK1NoaWZ0K0VudGVyKi4gDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQoNCg0KDQoNCmBgYHtyfQ0KcnZpczwtcmVhZC5kZWxpbSgicnZpc19yZXN1bHRzX2Fubm90YXRlZC5jc3YiLCBzZXA9IiwiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpDQpydmlzIDwtIHJ2aXMgJT4lIG11dGF0ZShjaHIgPSBhcy5udW1lcmljKGdzdWIoIlthLXpdIiwgIiIsIGNocikpKQ0KcnZpcyRjaHI8LWFzLmZhY3RvcihydmlzJGNocikNCnJ2aXM8LXJ2aXNbcnZpcyRydmlzIDwgMTEgLCBdDQpydmlzJHRvcCA8LSAiMCINCnJ2aXMuc29ydGVkPC0gcnZpcyAlPiUgYXJyYW5nZShydmlzKQ0KcnZpcy5zb3J0ZWQkdG9wW3J2aXMuc29ydGVkJHJ2aXM8PSAtMS42NjMxMThdIDwtICIxIg0KYGBgDQoNCg0KYGBge3J9DQpibG9tZW4uY3J1Y2lhbDwtcmVhZC5kZWxpbSgiQmxvbWVuXzIwMTVfc2NpZW5jZV9jb3JlZXNzZW50aWFsb21lLmNzdiIsIGhlYWRlcj1GLCBzZXA9IiwiLCBzdHJpbmdzQXNGYWN0b3JzID0gRikNCm5hbWVzKGJsb21lbi5jcnVjaWFsKVtuYW1lcyhibG9tZW4uY3J1Y2lhbCk9PSJWMSJdPC0gImhnbmNfc3ltYm9sIg0KYmxvbWVuLmNydWNpYWwkYmxvbWVuX2NydWNpYWw8LSIxIg0KcnZpczwtbWVyZ2UoYmxvbWVuLmNydWNpYWwsIHJ2aXMsIGJ5PSJoZ25jX3N5bWJvbCIsIGFsbC54PUYsIGFsbC55PVQpDQpydmlzJGJsb21lbl9jcnVjaWFsW2lzLm5hKHJ2aXMkYmxvbWVuX2NydWNpYWwpXTwtIjAiDQpydmlzJGJsb21lbl9jcnVjaWFsPC1hcy5mYWN0b3IocnZpcyRibG9tZW5fY3J1Y2lhbCkNCmBgYA0KDQoNCmBgYHtyfQ0KbW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbChsaW5rPSdsb2dpdCcpLCBkYXRhPXJ2aXMpDQojbW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbCwgZGF0YT1ydmlzKQ0KYGBgDQoNCg0KYGBge3J9DQpzdW1tYXJ5KG1vZGVsLmJsb21lbikNCmBgYA0KDQoNCg0KYGBge3J9DQpnb2RpbmkuY3J1Y2lhbDwtcmVhZC5kZWxpbSgiR29kaW5pXzIwMTVfZXNzZW50aWFsZ2VuZXMuY3N2IiwgaGVhZGVyPUYsIHNlcD0iLCIsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKQ0KbmFtZXMoZ29kaW5pLmNydWNpYWwpW25hbWVzKGdvZGluaS5jcnVjaWFsKT09IlYxIl08LSAiaGduY19zeW1ib2wiDQpnb2RpbmkuY3J1Y2lhbCRnb2RpbmlfY3J1Y2lhbDwtIjEiDQpydmlzPC1tZXJnZShnb2RpbmkuY3J1Y2lhbCwgcnZpcywgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9RiwgYWxsLnk9VCkNCnJ2aXMkZ29kaW5pX2NydWNpYWxbaXMubmEocnZpcyRnb2RpbmlfY3J1Y2lhbCldPC0iMCINCnJ2aXMkZ29kaW5pX2NydWNpYWw8LWFzLmZhY3RvcihydmlzJGdvZGluaV9jcnVjaWFsKQ0KYGBgDQoNCk5vdyBmb3IgbG9naXN0aWMgcmVncmVzc2lvbiBhbmFseXNlcw0KDQpgYGB7cn0NCm1vZGVsLmdvZGluaSA8LSBnbG0oZ29kaW5pX2NydWNpYWwgfiBydmlzLCBmYW1pbHk9Ymlub21pYWwobGluaz0nbG9naXQnKSwgZGF0YT1ydmlzKQ0KI21vZGVsLmdvZGluaSA8LSBnbG0oZ29kaW5pX2NydWNpYWwgfiBydmlzLCBmYW1pbHk9Ymlub21pYWwsIGRhdGE9cnZpcykNCmBgYA0KDQoNCmBgYHtyfQ0KIyBzdW1tYXJ5KG1vZGVsLmdvZGluaSkNCnNpbmsoIm1vZGVsLmdvZGluaS50eHQiKQ0KcHJpbnQoc3VtbWFyeShtb2RlbC5nb2RpbmkpKQ0Kc2luaygpDQpgYGANCg0KDQoNCg0KDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlJWSVMgY3J1Y2lhbCB2IG5vbi1jcnVjaWFsIGdlbmVzIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KVGhpcyBpcyBhbiBbUiBNYXJrZG93bl0oaHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbSkgTm90ZWJvb2suIFdoZW4geW91IGV4ZWN1dGUgY29kZSB3aXRoaW4gdGhlIG5vdGVib29rLCB0aGUgcmVzdWx0cyBhcHBlYXIgYmVuZWF0aCB0aGUgY29kZS4gDQoNCkV4ZWN1dGUgY29kZSBieSBjbGlja2luZyB0aGUgKlJ1biogYnV0dG9uIHdpdGhpbiB0aGUgY2h1bmsgb3IgYnkgcGxhY2luZyB5b3VyIGN1cnNvciBpbnNpZGUgaXQgYW5kIHByZXNzaW5nICpDdHJsK1NoaWZ0K0VudGVyKi4gDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQoNCg0KDQoNCmBgYHtyfQ0KcnZpczwtcmVhZC5kZWxpbSgicnZpc19yZXN1bHRzX2Fubm90YXRlZC5jc3YiLCBzZXA9IiwiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpDQpydmlzIDwtIHJ2aXMgJT4lIG11dGF0ZShjaHIgPSBhcy5udW1lcmljKGdzdWIoIlthLXpdIiwgIiIsIGNocikpKQ0KcnZpcyRjaHI8LWFzLmZhY3RvcihydmlzJGNocikNCnJ2aXM8LXJ2aXNbcnZpcyRydmlzIDwgMTEgLCBdDQpydmlzJHRvcCA8LSAiMCINCnJ2aXMuc29ydGVkPC0gcnZpcyAlPiUgYXJyYW5nZShydmlzKQ0KcnZpcy5zb3J0ZWQkdG9wW3J2aXMuc29ydGVkJHJ2aXM8PSAtMS42NjMxMThdIDwtICIxIg0KYGBgDQoNCkFuYWx5c2lzIHdpdGggQmxvbWVuIGV0IGFsLiBkYXRhOg0KDQpgYGB7cn0NCmJsb21lbi5jcnVjaWFsPC1yZWFkLmRlbGltKCJCbG9tZW5fMjAxNV9zY2llbmNlX2NvcmVlc3NlbnRpYWxvbWUuY3N2IiwgaGVhZGVyPUYsIHNlcD0iLCIsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKQ0KbmFtZXMoYmxvbWVuLmNydWNpYWwpW25hbWVzKGJsb21lbi5jcnVjaWFsKT09IlYxIl08LSAiaGduY19zeW1ib2wiDQpibG9tZW4uY3J1Y2lhbCRibG9tZW5fY3J1Y2lhbDwtIjEiDQpydmlzPC1tZXJnZShibG9tZW4uY3J1Y2lhbCwgcnZpcywgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9RiwgYWxsLnk9VCkNCnJ2aXMkYmxvbWVuX2NydWNpYWxbaXMubmEocnZpcyRibG9tZW5fY3J1Y2lhbCldPC0iMCINCnJ2aXMkYmxvbWVuX2NydWNpYWw8LWFzLmZhY3RvcihydmlzJGJsb21lbl9jcnVjaWFsKQ0KYGBgDQoNCkxvZ2lzdGljIHJlZ3Jlc3Npb24gYW5hbHlzZXM6DQoNCmBgYHtyfQ0KbW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbChsaW5rPSdsb2dpdCcpLCBkYXRhPXJ2aXMpDQojbW9kZWwuYmxvbWVuIDwtIGdsbShibG9tZW5fY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbCwgZGF0YT1ydmlzKQ0KYGBgDQoNCg0KYGBge3J9DQpzdW1tYXJ5KG1vZGVsLmJsb21lbikNCmBgYA0KDQpBbmFseXNpcyB3aXRoIEdvZGluaSBldCBhbC4gZGF0YToNCg0KYGBge3J9DQpnb2RpbmkuY3J1Y2lhbDwtcmVhZC5kZWxpbSgiR29kaW5pXzIwMTVfZXNzZW50aWFsZ2VuZXMuY3N2IiwgaGVhZGVyPUYsIHNlcD0iLCIsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKQ0KbmFtZXMoZ29kaW5pLmNydWNpYWwpW25hbWVzKGdvZGluaS5jcnVjaWFsKT09IlYxIl08LSAiaGduY19zeW1ib2wiDQpnb2RpbmkuY3J1Y2lhbCRnb2RpbmlfY3J1Y2lhbDwtIjEiDQpydmlzPC1tZXJnZShnb2RpbmkuY3J1Y2lhbCwgcnZpcywgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9RiwgYWxsLnk9VCkNCnJ2aXMkZ29kaW5pX2NydWNpYWxbaXMubmEocnZpcyRnb2RpbmlfY3J1Y2lhbCldPC0iMCINCnJ2aXMkZ29kaW5pX2NydWNpYWw8LWFzLmZhY3RvcihydmlzJGdvZGluaV9jcnVjaWFsKQ0KYGBgDQoNCkxvZ2lzdGljIHJlZ3Jlc3Npb24gYW5hbHlzZXM6DQoNCmBgYHtyfQ0KbW9kZWwuZ29kaW5pIDwtIGdsbShnb2RpbmlfY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbChsaW5rPSdsb2dpdCcpLCBkYXRhPXJ2aXMpDQojbW9kZWwuZ29kaW5pIDwtIGdsbShnb2RpbmlfY3J1Y2lhbCB+IHJ2aXMsIGZhbWlseT1iaW5vbWlhbCwgZGF0YT1ydmlzKQ0KYGBgDQoNCg0KYGBge3J9DQojIHN1bW1hcnkobW9kZWwuZ29kaW5pKQ0Kc2luaygibW9kZWwuZ29kaW5pLnR4dCIpDQpwcmludChzdW1tYXJ5KG1vZGVsLmdvZGluaSkpDQpzaW5rKCkNCmBgYA0KDQoNCg0KDQoNCg==</div>
 
 
 

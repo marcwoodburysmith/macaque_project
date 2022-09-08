@@ -1771,181 +1771,398 @@ pre code {
 <p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a>
 Notebook. When you execute code within the notebook, the results appear
 beneath the code.</p>
-<p>Try executing this chunk by clicking the <em>Run</em> button within
-the chunk or by placing your cursor inside it and p</p>
+<p>Execute code by clicking the <em>Run</em> button within the chunk or
+by placing your cursor inside it and p</p>
 <p>=============================================================</p>
 <p>Set up path, directories etc:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0d2QoZGlybmFtZShyc3R1ZGlvYXBpOjpnZXRBY3RpdmVEb2N1bWVudENvbnRleHQoKSRwYXRoKSlcbmRpci5jcmVhdGUoZmlsZS5wYXRoKFwicnZpc1wiKSlcbmxpYnJhcnkodGlkeXZlcnNlKVxub3B0aW9ucyh0aWJibGUud2lkdGggPSBJbmYpIFxub3B0aW9ucyh0aWJibGUucHJpbnRfbWF4ID0gSW5mKSBcbmBgYCJ9 -->
-<pre class="r"><code>setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-dir.create(file.path(&quot;rvis&quot;))
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2V0d2QoZGlybmFtZShyc3R1ZGlvYXBpOjpnZXRBY3RpdmVEb2N1bWVudENvbnRleHQoKSRwYXRoKSlcbmRpci5jcmVhdGUoZmlsZS5wYXRoKFxccnZpc1xcKSlcbmxpYnJhcnkodGlkeXZlcnNlKVxub3B0aW9ucyh0aWJibGUud2lkdGggPSBJbmYpIFxub3B0aW9ucyh0aWJibGUucHJpbnRfbWF4ID0gSW5mKSBcbmBgYFxuYGBgIn0= -->
+<pre class="r"><code>```r
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+dir.create(file.path(\rvis\))
 library(tidyverse)
 options(tibble.width = Inf) 
 options(tibble.print_max = Inf) </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Starting with the QC’d vcf files, generate tables of frequencies of
-different types of variant on gene-by-gene basis:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgenNoXG5mb3IgbnVtIGluIHsxLi4yMH07IFxuZG8gYmNmdG9vbHMgdmlldyAtRyAtZSAnSU5GTy9BRiA8IDAuMDEgfCBJTkZPL0FOTiB+IFwiaW50ZXJnZW5pY19yZWdpb25cIiAnIC1PdiBjaHIkY2hyLnZjZi5neiB8IGdyZXAgLXYgJ14jJyB8IGF3ayAtRiAnfCcgJ0JFR0lOe1NVQlNFUD1PRlM9RlN9IHthWyQyLCAkNF0rK31FTkQge2ZvciAoaSBpbiBhKSBwcmludCBpLCBhW2ldfScgPiByZXN1bHRzJG51bS50eHQ7XG5kb25lXG5gYGAifQ== -->
-<pre class="zsh"><code>for num in {1..20}; 
-do bcftools view -G -e &#39;INFO/AF &lt; 0.01 | INFO/ANN ~ &quot;intergenic_region&quot; &#39; -Ov chr$chr.vcf.gz | grep -v &#39;^#&#39; | awk -F &#39;|&#39; &#39;BEGIN{SUBSEP=OFS=FS} {a[$2, $4]++}END {for (i in a) print i, a[i]}&#39; &gt; results$num.txt;
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Starting with the QC&#39;d vcf files, generate tables of frequencies of different types of variant on gene-by-gene basis: 
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgenNoXG5gYGB6c2hcbmZvciBudW0gaW4gezEuLjIwfTsgXG5kbyBiY2Z0b29scyB2aWV3IC1HIC1lICdJTkZPL0FGIDwgMC4wMSB8IElORk8vQU5OIH4gXFxpbnRlcmdlbmljX3JlZ2lvblxcICcgLU92IGNociRjaHIudmNmLmd6IHwgZ3JlcCAtdiAnXiMnIHwgYXdrIC1GICd8JyAnQkVHSU57U1VCU0VQPU9GUz1GU30ge2FbJDIsICQ0XSsrfUVORCB7Zm9yIChpIGluIGEpIHByaW50IGksIGFbaV19JyA+IHJlc3VsdHMkbnVtLnR4dDtcbmRvbmVcbmBgYFxuYGBgIn0= --&gt;
+
+```zsh
+```zsh
+for num in {1..20}; 
+do bcftools view -G -e &#39;INFO/AF &lt; 0.01 | INFO/ANN ~ \intergenic_region\ &#39; -Ov chr$chr.vcf.gz | grep -v &#39;^#&#39; | awk -F &#39;|&#39; &#39;BEGIN{SUBSEP=OFS=FS} {a[$2, $4]++}END {for (i in a) print i, a[i]}&#39; &gt; results$num.txt;
 done</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Add chromosome column to each one (which can be automated with the
-above):</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgenNoXG5hd2sgLUYgJ3wnIC12IE9GUz1cIlxcdFwiICd7JChORisxKSA9IFwiY2hyWFwiOyBwcmludH0nICByZXN1bHRzJG51bS50eHQgPiByZXN1bHRzJG51bS50eHQgXG5gYGAifQ== -->
-<pre class="zsh"><code>awk -F &#39;|&#39; -v OFS=&quot;\t&quot; &#39;{$(NF+1) = &quot;chrX&quot;; print}&#39;  results$num.txt &gt; results$num.txt </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Process these files in R – these are step by step instructions for
-illustrative purposes. Further below is a block of text to automate this
-in a loop.</p>
-<p>Setup:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI29ubHkgZmlsZXMgdG8gbW9kaWZ5XG5yZXN1bHRzIDwtXCJyZXN1bHRzMS50eHRcIiAjbW9kaWZ5IGZvciBlYWNoIGNocm9tb3NvbWVcbm91dGZpbGUgPC0gXCJydmlzL3J2aXMxLnR4dFwiICNtb2RpZnkgZm9yIGVhY2ggY2hyb21vc29tZVxuYGBgIn0= -->
-<pre class="r"><code>#only files to modify
-results &lt;-&quot;results1.txt&quot; #modify for each chromosome
-outfile &lt;- &quot;rvis/rvis1.txt&quot; #modify for each chromosome</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0czwtcmVhZF90c3YocmVzdWx0cywgY29sX25hbWVzPUYpXG5yZXN1bHRzPC1yZXN1bHRzICU+JSBwaXZvdF93aWRlcihuYW1lc19mcm9tID0gWDEsIHZhbHVlc19mcm9tID0gWDMpXG5yZXN1bHRzW2lzLm5hKHJlc3VsdHMpXTwtIDBcbmBgYCJ9 -->
-<pre class="r"><code>results&lt;-read_tsv(results, col_names=F)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Add chromosome column to each one (which can be automated with the above):
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgenNoXG5gYGB6c2hcbmF3ayAtRiAnfCcgLXYgT0ZTPVxcXFx0XFwgJ3skKE5GKzEpID0gXFxjaHJYXFw7IHByaW50fScgIHJlc3VsdHMkbnVtLnR4dCA+IHJlc3VsdHMkbnVtLnR4dCBcbmBgYFxuYGBgIn0= --&gt;
+
+```zsh
+```zsh
+awk -F &#39;|&#39; -v OFS=\\t\ &#39;{$(NF+1) = \chrX\; print}&#39;  results$num.txt &gt; results$num.txt </code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Process these files in R -- these are step by step instructions for illustrative purposes. Further below is a block of text to automate this in a loop.
+
+Setup:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI29ubHkgZmlsZXMgdG8gbW9kaWZ5XG5yZXN1bHRzIDwtXFxyZXN1bHRzMS50eHRcXCAjbW9kaWZ5IGZvciBlYWNoIGNocm9tb3NvbWVcbm91dGZpbGUgPC0gXFxydmlzL3J2aXMxLnR4dFxcICNtb2RpZnkgZm9yIGVhY2ggY2hyb21vc29tZVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+#only files to modify
+results &lt;-\results1.txt\ #modify for each chromosome
+outfile &lt;- \rvis/rvis1.txt\ #modify for each chromosome</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucmVzdWx0czwtcmVhZF90c3YocmVzdWx0cywgY29sX25hbWVzPUYpXG5yZXN1bHRzPC1yZXN1bHRzICU+JSBwaXZvdF93aWRlcihuYW1lc19mcm9tID0gWDEsIHZhbHVlc19mcm9tID0gWDMpXG5yZXN1bHRzW2lzLm5hKHJlc3VsdHMpXTwtIDBcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+results&lt;-read_tsv(results, col_names=F)
 results&lt;-results %&gt;% pivot_wider(names_from = X1, values_from = X3)
 results[is.na(results)]&lt;- 0</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>This produces a tibble.</p>
-<p>Next you want to combine all the rows with nonsynonymous mutations.
-These include missense mutations and all mutation types annotated in
-SnpEff as HIGH or MODERATE impact:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGB7cn1cbnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShkYW1hZ2luZyA9IHJvd1N1bXMoc2VsZWN0KC4sIGNvbnRhaW5zKGMoXCJzdG9wX2xvc3RcIiwgXCJzdG9wX2dhaW5lZFwiLCBcInNwbGljZV9hY2NlcHRvclwiLCBcInNwbGljZV9kb25vclwiLCBcIm1pc3NlbnNlXCIsIFwiZnJhbWVzaGlmdFwiLCBcInN0YXJ0X2xvc3RcIiwgXCJzdGFydF9nYWluZWRcIiwgXCJtaXNzZW5zZVwiLCBcInNwbGljZV9yZWdpb25cIiwgXCJkaXNydXB0aXZlX2luZnJhbWVcIiwgXCJjb2Rpbmdfc2VxdWVuY2VcIiwgXCJjb25zZXJ2YXRpdmVfaW5mcmFtZVwiKSkpKSlcbmBgYCJ9 -->
-<pre class="r"><code>``{r}
-results&lt;-results %&gt;% mutate(damaging = rowSums(select(., contains(c(&quot;stop_lost&quot;, &quot;stop_gained&quot;, &quot;splice_acceptor&quot;, &quot;splice_donor&quot;, &quot;missense&quot;, &quot;frameshift&quot;, &quot;start_lost&quot;, &quot;start_gained&quot;, &quot;missense&quot;, &quot;splice_region&quot;, &quot;disruptive_inframe&quot;, &quot;coding_sequence&quot;, &quot;conservative_inframe&quot;)))))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Remove genes with neither synonymous nor nonsynonymous variants
-(uninformative):</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0czwtcmVzdWx0c1shKHJlc3VsdHMkc3lub255bW91c192YXJpYW50ID09IDAgJiByZXN1bHRzJGRhbWFnaW5nID09IDApLCBdXG5gYGAifQ== -->
-<pre class="r"><code>results&lt;-results[!(results$synonymous_variant == 0 &amp; results$damaging == 0), ]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>When calculating ratio of damaging to synonymous variants, those
-variants with 0 damaging (non-synonymous) will generate a ratio of 0
-which is fine. However, to avoid dividing by 0 (and generating ‘inf’ in
-R), add 1 to all values in synonymous variant column:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyAxXG5gYGAifQ== -->
-<pre class="r"><code>results$synonymous_variant &lt;- results$synonymous_variant + 1</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now generate damaging (i.e.nonsynonymous/synonymous ratio) and total
-variants per gene:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0czwtcmVzdWx0cyAlPiUgbXV0YXRlKHJhdGlvPWRhbWFnaW5nL3N5bm9ueW1vdXNfdmFyaWFudClcbnJlc3VsdHMkdG90YWw8LSByZXN1bHRzJHN5bm9ueW1vdXNfdmFyaWFudCArIHJlc3VsdHMkZGFtYWdpbmdcbmBgYCJ9 -->
-<pre class="r"><code>results&lt;-results %&gt;% mutate(ratio=damaging/synonymous_variant)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+This produces a tibble.
+
+
+Next you want to combine all the rows with nonsynonymous mutations. These include missense mutations and all mutation types annotated in SnpEff as HIGH or MODERATE impact:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYGB7cn1cbnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShkYW1hZ2luZyA9IHJvd1N1bXMoc2VsZWN0KC4sIGNvbnRhaW5zKGMoXFxzdG9wX2xvc3RcXCwgXFxzdG9wX2dhaW5lZFxcLCBcXHNwbGljZV9hY2NlcHRvclxcLCBcXHNwbGljZV9kb25vclxcLCBcXG1pc3NlbnNlXFwsIFxcZnJhbWVzaGlmdFxcLCBcXHN0YXJ0X2xvc3RcXCwgXFxzdGFydF9nYWluZWRcXCwgXFxtaXNzZW5zZVxcLCBcXHNwbGljZV9yZWdpb25cXCwgXFxkaXNydXB0aXZlX2luZnJhbWVcXCwgXFxjb2Rpbmdfc2VxdWVuY2VcXCwgXFxjb25zZXJ2YXRpdmVfaW5mcmFtZVxcKSkpKSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+``{r}
+results&lt;-results %&gt;% mutate(damaging = rowSums(select(., contains(c(\stop_lost\, \stop_gained\, \splice_acceptor\, \splice_donor\, \missense\, \frameshift\, \start_lost\, \start_gained\, \missense\, \splice_region\, \disruptive_inframe\, \coding_sequence\, \conservative_inframe\)))))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Remove genes with neither synonymous nor nonsynonymous variants (uninformative):
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucmVzdWx0czwtcmVzdWx0c1shKHJlc3VsdHMkc3lub255bW91c192YXJpYW50ID09IDAgJiByZXN1bHRzJGRhbWFnaW5nID09IDApLCBdXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+results&lt;-results[!(results$synonymous_variant == 0 &amp; results$damaging == 0), ]</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+When calculating ratio of damaging to synonymous variants, those variants with 0 damaging (non-synonymous) will generate a ratio of 0 which is fine. However, to avoid dividing by 0 (and generating &#39;inf&#39; in R), add 1 to all values in synonymous variant column:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyAxXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+results$synonymous_variant &lt;- results$synonymous_variant + 1</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Now generate damaging (i.e.nonsynonymous/synonymous ratio) and total variants per gene:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucmVzdWx0czwtcmVzdWx0cyAlPiUgbXV0YXRlKHJhdGlvPWRhbWFnaW5nL3N5bm9ueW1vdXNfdmFyaWFudClcbnJlc3VsdHMkdG90YWw8LSByZXN1bHRzJHN5bm9ueW1vdXNfdmFyaWFudCArIHJlc3VsdHMkZGFtYWdpbmdcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+results&lt;-results %&gt;% mutate(ratio=damaging/synonymous_variant)
 results$total&lt;- results$synonymous_variant + results$damaging</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Next, label columns:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmFtZXMocmVzdWx0cylbbmFtZXMocmVzdWx0cyk9PVwiWDJcIl08LSBcImhnbmNfc3ltYm9sXCJcbm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT1cIlg0XCJdPC0gXCJjaHJcIlxuYGBgIn0= -->
-<pre class="r"><code>names(results)[names(results)==&quot;X2&quot;]&lt;- &quot;hgnc_symbol&quot;
-names(results)[names(results)==&quot;X4&quot;]&lt;- &quot;chr&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Next, you need to add gene lengths to this table. First import the
-gff file and add column names and calculate new row of gene lengths:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFjYWNhX2dlbmVzPC1yZWFkLmRlbGltKFwibWFjYWNhX2J1aWxkMTAuZ2ZmXCIsIGhlYWRlcj1GLCBzZXA9XCJcXHRcIiwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5uYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PVwiVjVcIl08LSBcImhnbmNfc3ltYm9sXCJcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XCJWMVwiXTwtIFwiY2hyXCJcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XCJWMlwiXTwtIFwic3RhcnRcIlxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cIlYzXCJdPC0gXCJlbmRcIlxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cIlY0XCJdPC0gXCJuY2JpX2lkXCJcbm1hY2FjYV9nZW5lcyRsZW5ndGg8LW1hY2FjYV9nZW5lcyRlbmQgLSBtYWNhY2FfZ2VuZXMkc3RhcnRcbmBgYCJ9 -->
-<pre class="r"><code>macaca_genes&lt;-read.delim(&quot;macaca_build10.gff&quot;, header=F, sep=&quot;\t&quot;, stringsAsFactors = F)
-names(macaca_genes)[names(macaca_genes)==&quot;V5&quot;]&lt;- &quot;hgnc_symbol&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V1&quot;]&lt;- &quot;chr&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V2&quot;]&lt;- &quot;start&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V3&quot;]&lt;- &quot;end&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V4&quot;]&lt;- &quot;ncbi_id&quot;
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Next, label columns:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubmFtZXMocmVzdWx0cylbbmFtZXMocmVzdWx0cyk9PVxcWDJcXF08LSBcXGhnbmNfc3ltYm9sXFxcbm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT1cXFg0XFxdPC0gXFxjaHJcXFxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+names(results)[names(results)==\X2\]&lt;- \hgnc_symbol\
+names(results)[names(results)==\X4\]&lt;- \chr\</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Next, you need to add gene lengths to this table. First import the gff file and add column names and calculate new row of gene lengths:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWFjYWNhX2dlbmVzPC1yZWFkLmRlbGltKFxcbWFjYWNhX2J1aWxkMTAuZ2ZmXFwsIGhlYWRlcj1GLCBzZXA9XFxcXHRcXCwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5uYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PVxcVjVcXF08LSBcXGhnbmNfc3ltYm9sXFxcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XFxWMVxcXTwtIFxcY2hyXFxcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XFxWMlxcXTwtIFxcc3RhcnRcXFxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cXFYzXFxdPC0gXFxlbmRcXFxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cXFY0XFxdPC0gXFxuY2JpX2lkXFxcbm1hY2FjYV9nZW5lcyRsZW5ndGg8LW1hY2FjYV9nZW5lcyRlbmQgLSBtYWNhY2FfZ2VuZXMkc3RhcnRcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+macaca_genes&lt;-read.delim(\macaca_build10.gff\, header=F, sep=\\t\, stringsAsFactors = F)
+names(macaca_genes)[names(macaca_genes)==\V5\]&lt;- \hgnc_symbol\
+names(macaca_genes)[names(macaca_genes)==\V1\]&lt;- \chr\
+names(macaca_genes)[names(macaca_genes)==\V2\]&lt;- \start\
+names(macaca_genes)[names(macaca_genes)==\V3\]&lt;- \end\
+names(macaca_genes)[names(macaca_genes)==\V4\]&lt;- \ncbi_id\
 macaca_genes$length&lt;-macaca_genes$end - macaca_genes$start</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Extract genes on chromosome:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHJhbnNjcmlwdCA8LSBtYWNhY2FfZ2VuZXNbbWFjYWNhX2dlbmVzJGNocj09XCIxXCIsXSBcbmBgYCJ9 -->
-<pre class="r"><code>transcript &lt;- macaca_genes[macaca_genes$chr==&quot;1&quot;,] </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Merge:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0czwtbWVyZ2UocmVzdWx0cywgdHJhbnNjcmlwdCwgYnk9XCJoZ25jX3N5bWJvbFwiLCBhbGwuWD1ULCBhbGwueT1GKVxuYGBgIn0= -->
-<pre class="r"><code>results&lt;-merge(results, transcript, by=&quot;hgnc_symbol&quot;, all.X=T, all.y=F)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Extract relevant columns:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0cyA8LSByZXN1bHRzWywgYyhcImhnbmNfc3ltYm9sXCIsIFwiY2hyLnhcIiwgXCJzeW5vbnltb3VzX3ZhcmlhbnRcIiwgXCJkYW1hZ2luZ1wiLCBcInJhdGlvXCIsIFwidG90YWxcIiwgXCJzdGFydFwiLCBcImVuZFwiLCBcImxlbmd0aFwiKV1cbmBgYCJ9 -->
-<pre class="r"><code>results &lt;- results[, c(&quot;hgnc_symbol&quot;, &quot;chr.x&quot;, &quot;synonymous_variant&quot;, &quot;damaging&quot;, &quot;ratio&quot;, &quot;total&quot;, &quot;start&quot;, &quot;end&quot;, &quot;length&quot;)]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Save:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud3JpdGVfY3N2KHJlc3VsdHMsIGZpbGUgPSBvdXRmaWxlLCBjb2xfbmFtZXM9VClcbmBgYCJ9 -->
-<pre class="r"><code>write_csv(results, file = outfile, col_names=T)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Automated version of above code:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFjYWNhX2dlbmVzPC1yZWFkLmRlbGltKFwibWFjYWNhX2J1aWxkMTAuZ2ZmXCIsIGhlYWRlcj1GLCBzZXA9XCJcXHRcIiwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5uYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PVwiVjVcIl08LSBcImhnbmNfc3ltYm9sXCJcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XCJWMVwiXTwtIFwiY2hyXCJcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XCJWMlwiXTwtIFwic3RhcnRcIlxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cIlYzXCJdPC0gXCJlbmRcIlxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cIlY0XCJdPC0gXCJuY2JpX2lkXCJcbm1hY2FjYV9nZW5lcyRsZW5ndGg8LW1hY2FjYV9nZW5lcyRlbmQgLSBtYWNhY2FfZ2VuZXMkc3RhcnRcblxuZmlsZXMgPC0gbGlzdC5maWxlcyhwYXRoPVwiL3BhdGgvdG8vZmlsZXNcIiwgcGF0dGVybj1cIioudHh0XCIsIGZ1bGwubmFtZXM9VFJVRSlcbnRoZV9kaXI8LSBcIi9wYXRoL3RvL2RpclwiXG5mb3IgKGZpbGUgaW4gZmlsZXMpe1xuXHRyZXN1bHRzPC1yZWFkX3RzdihmaWxlLCBjb2xfbmFtZXM9Rilcblx0cmVzdWx0czwtcmVzdWx0cyAlPiUgcGl2b3Rfd2lkZXIobmFtZXNfZnJvbSA9IFgxLCB2YWx1ZXNfZnJvbSA9IFgzKVxucmVzdWx0c1tpcy5uYShyZXN1bHRzKV08LSAwXG5cbnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShkYW1hZ2luZyA9IHJvd1N1bXMoc2VsZWN0KC4sIGNvbnRhaW5zKGMoXCJzdG9wX2xvc3RcIiwgXCJzdG9wX2dhaW5lZFwiLCBcInNwbGljZV9hY2NlcHRvclwiLCBcInNwbGljZV9kb25vclwiLCBcIm1pc3NlbnNlXCIsIFwiZnJhbWVzaGlmdFwiLCBcInN0YXJ0X2xvc3RcIiwgXCJzdGFydF9nYWluZWRcIiwgXCJtaXNzZW5zZVwiLCBcInNwbGljZV9yZWdpb25cIiwgXCJkaXNydXB0aXZlX2luZnJhbWVcIiwgXCJjb2Rpbmdfc2VxdWVuY2VcIiwgXCJjb25zZXJ2YXRpdmVfaW5mcmFtZVwiKSkpKSlcblxucmVzdWx0czwtcmVzdWx0c1shKHJlc3VsdHMkc3lub255bW91c192YXJpYW50ID09IDAgJiByZXN1bHRzJGRhbWFnaW5nID09IDApLCBdXG5cbnJlc3VsdHMkc3lub255bW91c192YXJpYW50IDwtIHJlc3VsdHMkc3lub255bW91c192YXJpYW50ICsgMVxuXG5yZXN1bHRzPC1yZXN1bHRzICU+JSBtdXRhdGUocmF0aW89ZGFtYWdpbmcvc3lub255bW91c192YXJpYW50KVxucmVzdWx0cyR0b3RhbDwtIHJlc3VsdHMkc3lub255bW91c192YXJpYW50ICsgcmVzdWx0cyRkYW1hZ2luZ1xuXG5uYW1lcyhyZXN1bHRzKVtuYW1lcyhyZXN1bHRzKT09XCJYMlwiXTwtIFwiaGduY19zeW1ib2xcIlxubmFtZXMocmVzdWx0cylbbmFtZXMocmVzdWx0cyk9PVwiWDRcIl08LSBcImNoclwiXG5cbnJlc3VsdHM8LW1lcmdlKHJlc3VsdHMsIG1hY2FjYV9nZW5lcywgYnk9XCJoZ25jX3N5bWJvbFwiLCBhbGwuWD1ULCBhbGwueT1GKVxuXG5yZXN1bHRzIDwtIHJlc3VsdHNbLCBjKFwiaGduY19zeW1ib2xcIiwgXCJjaHIueFwiLCBcInN5bm9ueW1vdXNfdmFyaWFudFwiLCBcImRhbWFnaW5nXCIsIFwicmF0aW9cIiwgXCJ0b3RhbFwiLCBcInN0YXJ0XCIsIFwiZW5kXCIsIFwibGVuZ3RoXCIpXVxuXG53cml0ZV9jc3YocmVzdWx0cywgZmlsZT0gcGFzdGUwKHRoZV9kaXIsIFwiL1wiLCBiYXNlbmFtZShmaWxlKSksIGNvbF9uYW1lcz1UKVxufVxuYGBgIn0= -->
-<pre class="r"><code>macaca_genes&lt;-read.delim(&quot;macaca_build10.gff&quot;, header=F, sep=&quot;\t&quot;, stringsAsFactors = F)
-names(macaca_genes)[names(macaca_genes)==&quot;V5&quot;]&lt;- &quot;hgnc_symbol&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V1&quot;]&lt;- &quot;chr&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V2&quot;]&lt;- &quot;start&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V3&quot;]&lt;- &quot;end&quot;
-names(macaca_genes)[names(macaca_genes)==&quot;V4&quot;]&lt;- &quot;ncbi_id&quot;
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Extract genes on chromosome:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxudHJhbnNjcmlwdCA8LSBtYWNhY2FfZ2VuZXNbbWFjYWNhX2dlbmVzJGNocj09XFwxXFwsXSBcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+transcript &lt;- macaca_genes[macaca_genes$chr==\1\,] </code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Merge:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucmVzdWx0czwtbWVyZ2UocmVzdWx0cywgdHJhbnNjcmlwdCwgYnk9XFxoZ25jX3N5bWJvbFxcLCBhbGwuWD1ULCBhbGwueT1GKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+results&lt;-merge(results, transcript, by=\hgnc_symbol\, all.X=T, all.y=F)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Extract relevant columns:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucmVzdWx0cyA8LSByZXN1bHRzWywgYyhcXGhnbmNfc3ltYm9sXFwsIFxcY2hyLnhcXCwgXFxzeW5vbnltb3VzX3ZhcmlhbnRcXCwgXFxkYW1hZ2luZ1xcLCBcXHJhdGlvXFwsIFxcdG90YWxcXCwgXFxzdGFydFxcLCBcXGVuZFxcLCBcXGxlbmd0aFxcKV1cbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+results &lt;- results[, c(\hgnc_symbol\, \chr.x\, \synonymous_variant\, \damaging\, \ratio\, \total\, \start\, \end\, \length\)]</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Save:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxud3JpdGVfY3N2KHJlc3VsdHMsIGZpbGUgPSBvdXRmaWxlLCBjb2xfbmFtZXM9VClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+write_csv(results, file = outfile, col_names=T)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Automated version of above code:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWFjYWNhX2dlbmVzPC1yZWFkLmRlbGltKFxcbWFjYWNhX2J1aWxkMTAuZ2ZmXFwsIGhlYWRlcj1GLCBzZXA9XFxcXHRcXCwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5uYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PVxcVjVcXF08LSBcXGhnbmNfc3ltYm9sXFxcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XFxWMVxcXTwtIFxcY2hyXFxcbm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09XFxWMlxcXTwtIFxcc3RhcnRcXFxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cXFYzXFxdPC0gXFxlbmRcXFxubmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT1cXFY0XFxdPC0gXFxuY2JpX2lkXFxcbm1hY2FjYV9nZW5lcyRsZW5ndGg8LW1hY2FjYV9nZW5lcyRlbmQgLSBtYWNhY2FfZ2VuZXMkc3RhcnRcblxuZmlsZXMgPC0gbGlzdC5maWxlcyhwYXRoPVxcL3BhdGgvdG8vZmlsZXNcXCwgcGF0dGVybj1cXCoudHh0XFwsIGZ1bGwubmFtZXM9VFJVRSlcbnRoZV9kaXI8LSBcXC9wYXRoL3RvL2RpclxcXG5mb3IgKGZpbGUgaW4gZmlsZXMpe1xuXHRyZXN1bHRzPC1yZWFkX3RzdihmaWxlLCBjb2xfbmFtZXM9Rilcblx0cmVzdWx0czwtcmVzdWx0cyAlPiUgcGl2b3Rfd2lkZXIobmFtZXNfZnJvbSA9IFgxLCB2YWx1ZXNfZnJvbSA9IFgzKVxucmVzdWx0c1tpcy5uYShyZXN1bHRzKV08LSAwXG5cbnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShkYW1hZ2luZyA9IHJvd1N1bXMoc2VsZWN0KC4sIGNvbnRhaW5zKGMoXFxzdG9wX2xvc3RcXCwgXFxzdG9wX2dhaW5lZFxcLCBcXHNwbGljZV9hY2NlcHRvclxcLCBcXHNwbGljZV9kb25vclxcLCBcXG1pc3NlbnNlXFwsIFxcZnJhbWVzaGlmdFxcLCBcXHN0YXJ0X2xvc3RcXCwgXFxzdGFydF9nYWluZWRcXCwgXFxtaXNzZW5zZVxcLCBcXHNwbGljZV9yZWdpb25cXCwgXFxkaXNydXB0aXZlX2luZnJhbWVcXCwgXFxjb2Rpbmdfc2VxdWVuY2VcXCwgXFxjb25zZXJ2YXRpdmVfaW5mcmFtZVxcKSkpKSlcblxucmVzdWx0czwtcmVzdWx0c1shKHJlc3VsdHMkc3lub255bW91c192YXJpYW50ID09IDAgJiByZXN1bHRzJGRhbWFnaW5nID09IDApLCBdXG5cbnJlc3VsdHMkc3lub255bW91c192YXJpYW50IDwtIHJlc3VsdHMkc3lub255bW91c192YXJpYW50ICsgMVxuXG5yZXN1bHRzPC1yZXN1bHRzICU+JSBtdXRhdGUocmF0aW89ZGFtYWdpbmcvc3lub255bW91c192YXJpYW50KVxucmVzdWx0cyR0b3RhbDwtIHJlc3VsdHMkc3lub255bW91c192YXJpYW50ICsgcmVzdWx0cyRkYW1hZ2luZ1xuXG5uYW1lcyhyZXN1bHRzKVtuYW1lcyhyZXN1bHRzKT09XFxYMlxcXTwtIFxcaGduY19zeW1ib2xcXFxubmFtZXMocmVzdWx0cylbbmFtZXMocmVzdWx0cyk9PVxcWDRcXF08LSBcXGNoclxcXG5cbnJlc3VsdHM8LW1lcmdlKHJlc3VsdHMsIG1hY2FjYV9nZW5lcywgYnk9XFxoZ25jX3N5bWJvbFxcLCBhbGwuWD1ULCBhbGwueT1GKVxuXG5yZXN1bHRzIDwtIHJlc3VsdHNbLCBjKFxcaGduY19zeW1ib2xcXCwgXFxjaHIueFxcLCBcXHN5bm9ueW1vdXNfdmFyaWFudFxcLCBcXGRhbWFnaW5nXFwsIFxccmF0aW9cXCwgXFx0b3RhbFxcLCBcXHN0YXJ0XFwsIFxcZW5kXFwsIFxcbGVuZ3RoXFwpXVxuXG53cml0ZV9jc3YocmVzdWx0cywgZmlsZT0gcGFzdGUwKHRoZV9kaXIsIFxcL1xcLCBiYXNlbmFtZShmaWxlKSksIGNvbF9uYW1lcz1UKVxufVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+macaca_genes&lt;-read.delim(\macaca_build10.gff\, header=F, sep=\\t\, stringsAsFactors = F)
+names(macaca_genes)[names(macaca_genes)==\V5\]&lt;- \hgnc_symbol\
+names(macaca_genes)[names(macaca_genes)==\V1\]&lt;- \chr\
+names(macaca_genes)[names(macaca_genes)==\V2\]&lt;- \start\
+names(macaca_genes)[names(macaca_genes)==\V3\]&lt;- \end\
+names(macaca_genes)[names(macaca_genes)==\V4\]&lt;- \ncbi_id\
 macaca_genes$length&lt;-macaca_genes$end - macaca_genes$start
 
-files &lt;- list.files(path=&quot;/path/to/files&quot;, pattern=&quot;*.txt&quot;, full.names=TRUE)
-the_dir&lt;- &quot;/path/to/dir&quot;
+files &lt;- list.files(path=\/path/to/files\, pattern=\*.txt\, full.names=TRUE)
+the_dir&lt;- \/path/to/dir\
 for (file in files){
     results&lt;-read_tsv(file, col_names=F)
     results&lt;-results %&gt;% pivot_wider(names_from = X1, values_from = X3)
 results[is.na(results)]&lt;- 0
 
-results&lt;-results %&gt;% mutate(damaging = rowSums(select(., contains(c(&quot;stop_lost&quot;, &quot;stop_gained&quot;, &quot;splice_acceptor&quot;, &quot;splice_donor&quot;, &quot;missense&quot;, &quot;frameshift&quot;, &quot;start_lost&quot;, &quot;start_gained&quot;, &quot;missense&quot;, &quot;splice_region&quot;, &quot;disruptive_inframe&quot;, &quot;coding_sequence&quot;, &quot;conservative_inframe&quot;)))))
+results&lt;-results %&gt;% mutate(damaging = rowSums(select(., contains(c(\stop_lost\, \stop_gained\, \splice_acceptor\, \splice_donor\, \missense\, \frameshift\, \start_lost\, \start_gained\, \missense\, \splice_region\, \disruptive_inframe\, \coding_sequence\, \conservative_inframe\)))))
 
 results&lt;-results[!(results$synonymous_variant == 0 &amp; results$damaging == 0), ]
 
@@ -1954,28 +2171,42 @@ results$synonymous_variant &lt;- results$synonymous_variant + 1
 results&lt;-results %&gt;% mutate(ratio=damaging/synonymous_variant)
 results$total&lt;- results$synonymous_variant + results$damaging
 
-names(results)[names(results)==&quot;X2&quot;]&lt;- &quot;hgnc_symbol&quot;
-names(results)[names(results)==&quot;X4&quot;]&lt;- &quot;chr&quot;
+names(results)[names(results)==\X2\]&lt;- \hgnc_symbol\
+names(results)[names(results)==\X4\]&lt;- \chr\
 
-results&lt;-merge(results, macaca_genes, by=&quot;hgnc_symbol&quot;, all.X=T, all.y=F)
+results&lt;-merge(results, macaca_genes, by=\hgnc_symbol\, all.X=T, all.y=F)
 
-results &lt;- results[, c(&quot;hgnc_symbol&quot;, &quot;chr.x&quot;, &quot;synonymous_variant&quot;, &quot;damaging&quot;, &quot;ratio&quot;, &quot;total&quot;, &quot;start&quot;, &quot;end&quot;, &quot;length&quot;)]
+results &lt;- results[, c(\hgnc_symbol\, \chr.x\, \synonymous_variant\, \damaging\, \ratio\, \total\, \start\, \end\, \length\)]
 
-write_csv(results, file= paste0(the_dir, &quot;/&quot;, basename(file)), col_names=T)
+write_csv(results, file= paste0(the_dir, \/\, basename(file)), col_names=T)
 }</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Finally calculate rvis scores. First combine all files generated
-above into one:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmlsZXMgIDwtIGxpc3QuZmlsZXMocGF0dGVybiA9ICdcXFxcLnR4dCcpXG50YWJsZXMgPC0gbGFwcGx5KGZpbGVzLCByZWFkLmNzdiwgaGVhZGVyID0gVFJVRSlcbmNvbWJpbmVkIDwtIGRvLmNhbGwocmJpbmQsIHRhYmxlcylcbiN3cml0ZV9jc3YoY29tYmluZWQsIGZpbGU9XCJjb21iaW5lZC50eHRcIiwgY29sX25hbWVzPVQpXG4jY29tYmluZWQ8LXJlYWRfY3N2KFwiY29tYmluZWQudHh0XCIsIGNvbF9uYW1lcyA9IFQpXG5sbS5yID0gbG0oZGFtYWdpbmcgfiB0b3RhbCwgZGF0YT1jb21iaW5lZClcbnN1bW1hcnkobG0ucilcbiNjb2VmKGxtLnIpICMgZ2l2ZXMgdGhlIG1vZGVs4oCZcyBjb2VmZmljaWVudHNcbiNmaXR0ZWQobG0ucikgIyBnaXZlcyB0aGUgcHJlZGljdGVkIHZhbHVlcyBmb3IgWSwgaS5lLiAgdGhlIGV4cGVjdGVkIGJ1cmRlbiBvZiBtaXNzZW5zZSBtdXRhdGlvbnNcbiNyZXNpZChsbS5yKSAjIGdpdmVzIHRoZSByZXNpZHVhbCBlcnJvcnMgaW4gWVxuI2NvZWYobG0ucikgIyBnaXZlcyB0aGUgbW9kZWzigJlzIGNvZWZmaWNpZW50c1xuICBcbiNsYXlvdXQobWF0cml4KDE6NCwyLDIpKVxuI3Bsb3QobG0ucilcbiAgXG4jYWRkIHJlc2lkdWFscyBhbmQgZml0dGVkIHZhbHVlcyB0byBjb21iaW5lZCBkYXRhIGZyYW1lXG5jb21iaW5lZCRyZXNpZDwtcmVzaWQobG0ucilcbmNvbWJpbmVkJGZpdHRlZDwtZml0dGVkKGxtLnIpXG4gIFxuI2dlbmVyYXRlIGNvbHVtbiBvZiBzdHVkZW50aXplZCByZXNpZHVhbHMgLS0gdGhlIHJ2aXMgc2NvcmVcbnNkKGNvbWJpbmVkJHJlc2lkKVxuY29tYmluZWQkcnZpcyA8LSBjb21iaW5lZCRyZXNpZC8zLjIzOVxuICBcbiNzYXZlIHRoaXMgZGF0YS5mcmFtZVxud3JpdGVfY3N2KGNvbWJpbmVkLCBmaWxlPVwicnZpcy1yZXN1bHRzLnR4dFwiLCBjb2xfbmFtZXM9VClcbmBgYCJ9 -->
-<pre class="r"><code>files  &lt;- list.files(pattern = &#39;\\.txt&#39;)
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Finally calculate rvis scores. First combine all files generated above into one:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZmlsZXMgIDwtIGxpc3QuZmlsZXMocGF0dGVybiA9ICdcXFxcLnR4dCcpXG50YWJsZXMgPC0gbGFwcGx5KGZpbGVzLCByZWFkLmNzdiwgaGVhZGVyID0gVFJVRSlcbmNvbWJpbmVkIDwtIGRvLmNhbGwocmJpbmQsIHRhYmxlcylcbiN3cml0ZV9jc3YoY29tYmluZWQsIGZpbGU9XFxjb21iaW5lZC50eHRcXCwgY29sX25hbWVzPVQpXG4jY29tYmluZWQ8LXJlYWRfY3N2KFxcY29tYmluZWQudHh0XFwsIGNvbF9uYW1lcyA9IFQpXG5sbS5yID0gbG0oZGFtYWdpbmcgfiB0b3RhbCwgZGF0YT1jb21iaW5lZClcbnN1bW1hcnkobG0ucilcbiNjb2VmKGxtLnIpICMgZ2l2ZXMgdGhlIG1vZGVs4oCZcyBjb2VmZmljaWVudHNcbiNmaXR0ZWQobG0ucikgIyBnaXZlcyB0aGUgcHJlZGljdGVkIHZhbHVlcyBmb3IgWSwgaS5lLiAgdGhlIGV4cGVjdGVkIGJ1cmRlbiBvZiBtaXNzZW5zZSBtdXRhdGlvbnNcbiNyZXNpZChsbS5yKSAjIGdpdmVzIHRoZSByZXNpZHVhbCBlcnJvcnMgaW4gWVxuI2NvZWYobG0ucikgIyBnaXZlcyB0aGUgbW9kZWzigJlzIGNvZWZmaWNpZW50c1xuICBcbiNsYXlvdXQobWF0cml4KDE6NCwyLDIpKVxuI3Bsb3QobG0ucilcbiAgXG4jYWRkIHJlc2lkdWFscyBhbmQgZml0dGVkIHZhbHVlcyB0byBjb21iaW5lZCBkYXRhIGZyYW1lXG5jb21iaW5lZCRyZXNpZDwtcmVzaWQobG0ucilcbmNvbWJpbmVkJGZpdHRlZDwtZml0dGVkKGxtLnIpXG4gIFxuI2dlbmVyYXRlIGNvbHVtbiBvZiBzdHVkZW50aXplZCByZXNpZHVhbHMgLS0gdGhlIHJ2aXMgc2NvcmVcbnNkKGNvbWJpbmVkJHJlc2lkKVxuY29tYmluZWQkcnZpcyA8LSBjb21iaW5lZCRyZXNpZC8zLjIzOVxuICBcbiNzYXZlIHRoaXMgZGF0YS5mcmFtZVxud3JpdGVfY3N2KGNvbWJpbmVkLCBmaWxlPVxccnZpcy1yZXN1bHRzLnR4dFxcLCBjb2xfbmFtZXM9VClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+files  &lt;- list.files(pattern = &#39;\\.txt&#39;)
 tables &lt;- lapply(files, read.csv, header = TRUE)
 combined &lt;- do.call(rbind, tables)
-#write_csv(combined, file=&quot;combined.txt&quot;, col_names=T)
-#combined&lt;-read_csv(&quot;combined.txt&quot;, col_names = T)
+#write_csv(combined, file=\combined.txt\, col_names=T)
+#combined&lt;-read_csv(\combined.txt\, col_names = T)
 lm.r = lm(damaging ~ total, data=combined)
 summary(lm.r)
 #coef(lm.r) # gives the model’s coefficients
@@ -1995,73 +2226,68 @@ sd(combined$resid)
 combined$rvis &lt;- combined$resid/3.239
   
 #save this data.frame
+write_csv(combined, file=\rvis-results.txt\, col_names=T)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Add residuals and fitted values to combined data frame, generate studentized residuals (the RVIS score) and save:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29tYmluZWQkcmVzaWQ8LXJlc2lkKGxtLnIpXG5jb21iaW5lZCRmaXR0ZWQ8LWZpdHRlZChsbS5yKVxuc2QoY29tYmluZWQkcmVzaWQpXG5jb21iaW5lZCRydmlzIDwtIGNvbWJpbmVkJHJlc2lkLzMuMjM5XG53cml0ZV9jc3YoY29tYmluZWQsIGZpbGU9XCJydmlzLXJlc3VsdHMudHh0XCIsIGNvbF9uYW1lcz1UKVxuYGBgIn0= --&gt;
+
+```r
+combined$resid&lt;-resid(lm.r)
+combined$fitted&lt;-fitted(lm.r)
+sd(combined$resid)
+combined$rvis &lt;- combined$resid/3.239
 write_csv(combined, file=&quot;rvis-results.txt&quot;, col_names=T)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Note: Positive RVIS scores indicate that there are a greater number
-of damaging variants than expected – presumably the gene is tolerant of
-mutations. And vice versa for negative RVIS scores.</p>
+of damaging variants than expected – the gene is tolerant of mutations.
+And vice versa for negative RVIS scores.</p>
 <p>You now need to add extra columns to earmark disorder specific
 genes:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIHRoZSBmaWxlIHlvdSBoYXZlIGdlbmVyYXRlZFxucnZpczwtcmVhZC5jc3YoXCJydmlzL3J2aXMtcmVzdWx0cy50eHRcIiwgaGVhZGVyPVQpXG5cbiNyZWFkIGluIGxpc3Qgb2YgU0ZBUkkgZ2VuZXNcbnNmYXJpLmFzZDwtcmVhZC5kZWxpbShcIi9wYXRoL3RvL2ZpbGVzL1NGQVJJLWFzZC1nZW5lcy5jc3ZcIiwgaGVhZGVyPVQsIHNlcD1cIixcIiwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpXG5uYW1lcyhzZmFyaS5hc2QpW25hbWVzKHNmYXJpLmFzZCk9PVwiZ2VuZS5zeW1ib2xcIl08LVwiaGduY19zeW1ib2xcIiBcbnNmYXJpLmFsbDwtIHNmYXJpLmFzZFssIGMoMiw1KV1cbnNmYXJpLmFsbCRzZmFyaV9hbGw8LVwiMVwiXG5ydmlzPC1tZXJnZShzZmFyaS5hbGwsIHJ2aXMsIGJ5PVwiaGduY19zeW1ib2xcIiwgYWxsLng9RiwgYWxsLnk9VClcbnJ2aXMkc2ZhcmlfYWxsW2lzLm5hKHJ2aXMkc2ZhcmlfYWxsKV08LTBcbm5hbWVzKHJ2aXMpW25hbWVzKHJ2aXMpPT1cImNoci54XCJdPC1cImNoclwiXG5ydmlzIDwtIHJ2aXMgJT4lIHNlbGVjdCgtY29udGFpbnMoYygnY2hyb20nLCAnZW5zZW1iJykpKSAjdGlkeWluZyB1cFxuYGBgIn0= -->
-<pre class="r"><code># read in the file you have generated
-rvis&lt;-read.csv(&quot;rvis/rvis-results.txt&quot;, header=T)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIHRoZSBmaWxlIHlvdSBoYXZlIGdlbmVyYXRlZFxucnZpczwtcmVhZC5jc3YoXFxydmlzL3J2aXMtcmVzdWx0cy50eHRcXCwgaGVhZGVyPVQpXG5cbiNyZWFkIGluIGxpc3Qgb2YgU0ZBUkkgZ2VuZXNcbnNmYXJpLmFzZDwtcmVhZC5kZWxpbShcXC9wYXRoL3RvL2ZpbGVzL1NGQVJJLWFzZC1nZW5lcy5jc3ZcXCwgaGVhZGVyPVQsIHNlcD1cXFxuYGBgIn0= -->
+<pre class="r"><code>```r
+# read in the file you have generated
+rvis&lt;-read.csv(\rvis/rvis-results.txt\, header=T)
 
 #read in list of SFARI genes
-sfari.asd&lt;-read.delim(&quot;/path/to/files/SFARI-asd-genes.csv&quot;, header=T, sep=&quot;,&quot;, stringsAsFactors = F)
-names(sfari.asd)[names(sfari.asd)==&quot;gene.symbol&quot;]&lt;-&quot;hgnc_symbol&quot; 
-sfari.all&lt;- sfari.asd[, c(2,5)]
-sfari.all$sfari_all&lt;-&quot;1&quot;
-rvis&lt;-merge(sfari.all, rvis, by=&quot;hgnc_symbol&quot;, all.x=F, all.y=T)
-rvis$sfari_all[is.na(rvis$sfari_all)]&lt;-0
-names(rvis)[names(rvis)==&quot;chr.x&quot;]&lt;-&quot;chr&quot;
-rvis &lt;- rvis %&gt;% select(-contains(c(&#39;chrom&#39;, &#39;ensemb&#39;))) #tidying up</code></pre>
+sfari.asd&lt;-read.delim(\/path/to/files/SFARI-asd-genes.csv\, header=T, sep=\</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Identical process for other gene sets:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXBpbGVwc3lfZGlzZ2VuZXQ8LXJlYWQuZGVsaW0oXCIvcGF0aC90by9maWxlcy9lcGlsZXBzeV9kaXNnZW5ldC50eHRcIiwgc2VwPVwiLFwiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycz1GKVxuZXBpbGVwc3lfZGlzZ2VuZXQkZXBpbGVwc3k8LVwiMVwiXG5lcGlsZXBzeTwtZXBpbGVwc3lfZGlzZ2VuZXRbLCBjKDEsIDQpXVxubmFtZXMoZXBpbGVwc3kpW25hbWVzKGVwaWxlcHN5KT09XCJHZW5lXCJdPC1cImhnbmNfc3ltYm9sXCJcbnJ2aXM8LW1lcmdlKHJ2aXMsIGVwaWxlcHN5LCBieT1cImhnbmNfc3ltYm9sXCIsIGFsbC54PVQsIGFsbC55PUYpXG5ydmlzJGVwaWxlcHN5W2lzLm5hKHJ2aXMkZXBpbGVwc3kpXTwtMFxuXG5hc2RfZGlzZ2VuZXQ8LXJlYWQuZGVsaW0oXCIvcGF0aC90by9maWxlcy9hc2RfZGlzZ2VuZXQudHh0XCIsIHNlcD1cIlxcdFwiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycz1GKVxuYXNkX2Rpc2dlbmV0JGFzZF9kaXNnZW5ldDwtXCIxXCJcbmFzZDwtYXNkX2Rpc2dlbmV0WywgYygxLCA0KV1cbm5hbWVzKGFzZClbbmFtZXMoYXNkKT09XCJHZW5lXCJdPC1cImhnbmNfc3ltYm9sXCJcbnJ2aXM8LW1lcmdlKHJ2aXMsIGFzZCwgYnk9XCJoZ25jX3N5bWJvbFwiLCBhbGwueD1ULCBhbGwueT1GKVxucnZpcyRhc2RfZGlzZ2VuZXRbaXMubmEocnZpcyRhc2RfZGlzZ2VuZXQpXTwtMFxuICBcbmlkX2Rpc2dlbmV0PC1yZWFkLmRlbGltKFwicGF0aC90by9maWxlcy9pZF9kaXNnZW5ldC50eHRcIiwgc2VwPVwiXFx0XCIsIGhlYWRlcj1ULCBzdHJpbmdzQXNGYWN0b3JzPUYpXG5pZF9kaXNnZW5ldCRpZF9kaXNnZW5ldDwtXCIxXCJcbmlkPC1pZF9kaXNnZW5ldFssIGMoMSwgNCldXG5uYW1lcyhpZClbbmFtZXMoaWQpPT1cIkdlbmVcIl08LVwiaGduY19zeW1ib2xcIlxucnZpczwtbWVyZ2UocnZpcywgaWQsIGJ5PVwiaGduY19zeW1ib2xcIiwgYWxsLng9VCwgYWxsLnk9RilcbnJ2aXMkaWRfZGlzZ2VuZXRbaXMubmEocnZpcyRpZF9kaXNnZW5ldCldPC0wXG4gXG5zel9kaXNnZW5ldDwtcmVhZC5kZWxpbShcIi9wYXRoL3RvL2ZpbGVzL3N6X2Rpc2dlbmV0LnR4dFwiLCBzZXA9XCIsXCIsIGhlYWRlcj1ULCBzdHJpbmdzQXNGYWN0b3JzPUYpXG5zel9kaXNnZW5ldCRzejwtXCIxXCJcbnN6PC1zel9kaXNnZW5ldFssIGMoMSwgNCldXG5uYW1lcyhzeilbbmFtZXMoc3opPT1cIkdlbmVcIl08LVwiaGduY19zeW1ib2xcIlxucnZpczwtbWVyZ2UocnZpcywgc3osIGJ5PVwiaGduY19zeW1ib2xcIiwgYWxsLng9VCwgYWxsLnk9RilcbnJ2aXMkc3pbaXMubmEocnZpcyRzeildPC0wXG5gYGAifQ== -->
-<pre class="r"><code>epilepsy_disgenet&lt;-read.delim(&quot;/path/to/files/epilepsy_disgenet.txt&quot;, sep=&quot;,&quot;, header=T, stringsAsFactors=F)
-epilepsy_disgenet$epilepsy&lt;-&quot;1&quot;
-epilepsy&lt;-epilepsy_disgenet[, c(1, 4)]
-names(epilepsy)[names(epilepsy)==&quot;Gene&quot;]&lt;-&quot;hgnc_symbol&quot;
-rvis&lt;-merge(rvis, epilepsy, by=&quot;hgnc_symbol&quot;, all.x=T, all.y=F)
-rvis$epilepsy[is.na(rvis$epilepsy)]&lt;-0
-
-asd_disgenet&lt;-read.delim(&quot;/path/to/files/asd_disgenet.txt&quot;, sep=&quot;\t&quot;, header=T, stringsAsFactors=F)
-asd_disgenet$asd_disgenet&lt;-&quot;1&quot;
-asd&lt;-asd_disgenet[, c(1, 4)]
-names(asd)[names(asd)==&quot;Gene&quot;]&lt;-&quot;hgnc_symbol&quot;
-rvis&lt;-merge(rvis, asd, by=&quot;hgnc_symbol&quot;, all.x=T, all.y=F)
-rvis$asd_disgenet[is.na(rvis$asd_disgenet)]&lt;-0
-  
-id_disgenet&lt;-read.delim(&quot;path/to/files/id_disgenet.txt&quot;, sep=&quot;\t&quot;, header=T, stringsAsFactors=F)
-id_disgenet$id_disgenet&lt;-&quot;1&quot;
-id&lt;-id_disgenet[, c(1, 4)]
-names(id)[names(id)==&quot;Gene&quot;]&lt;-&quot;hgnc_symbol&quot;
-rvis&lt;-merge(rvis, id, by=&quot;hgnc_symbol&quot;, all.x=T, all.y=F)
-rvis$id_disgenet[is.na(rvis$id_disgenet)]&lt;-0
- 
-sz_disgenet&lt;-read.delim(&quot;/path/to/files/sz_disgenet.txt&quot;, sep=&quot;,&quot;, header=T, stringsAsFactors=F)
-sz_disgenet$sz&lt;-&quot;1&quot;
-sz&lt;-sz_disgenet[, c(1, 4)]
-names(sz)[names(sz)==&quot;Gene&quot;]&lt;-&quot;hgnc_symbol&quot;
-rvis&lt;-merge(rvis, sz, by=&quot;hgnc_symbol&quot;, all.x=T, all.y=F)
-rvis$sz[is.na(rvis$sz)]&lt;-0</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZXBpbGVwc3lfZGlzZ2VuZXQ8LXJlYWQuZGVsaW0oXFwvcGF0aC90by9maWxlcy9lcGlsZXBzeV9kaXNnZW5ldC50eHRcXCwgc2VwPVxcXG5gYGAifQ== -->
+<pre class="r"><code>```r
+epilepsy_disgenet&lt;-read.delim(\/path/to/files/epilepsy_disgenet.txt\, sep=\</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>And for NDD genes: these are genes that overlap all disorders (note
-the need to convert the chr column)</p>
+<p>And for NDD genes: these are genes that overlap all disorders:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucnZpcyA8LSBydmlzICU+JSBtdXRhdGUoY2hyID0gYXMubnVtZXJpYyhnc3ViKFwiW2Etel1cIiwgXCJcIiwgY2hyKSkpXG5ydmlzJGNocjwtYXMuZmFjdG9yKHJ2aXMkY2hyKVxuXG5ydmlzJE5ERDwtaWZlbHNlKHJ2aXMkZXBpbGVwc3k9PTEgJiBydmlzJGFzZF9kaXNnZW5ldD09MSAmIHJ2aXMkaWRfZGlzZ2VuZXQgPT0gMSAmIHJ2aXMkc3ogPT0gMSwgMSwgMClcbnJ2aXMkTkREPC1hcy5mYWN0b3IocnZpcyROREQpXG5cbiMgZm9yIHNvbWUgc3VtbWFyeSBzdGF0cy4gXG4jIHRhcHBseShydmlzJHJ2aXMsIHJ2aXMkTkRELCBzdW1tYXJ5KSBcbmBgYCJ9 -->
-<pre class="r"><code>rvis &lt;- rvis %&gt;% mutate(chr = as.numeric(gsub(&quot;[a-z]&quot;, &quot;&quot;, chr)))
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucnZpcyA8LSBydmlzICU+JSBtdXRhdGUoY2hyID0gYXMubnVtZXJpYyhnc3ViKFxcW2Etel1cXCwgXFxcXCwgY2hyKSkpXG5ydmlzJGNocjwtYXMuZmFjdG9yKHJ2aXMkY2hyKVxuXG5ydmlzJE5ERDwtaWZlbHNlKHJ2aXMkZXBpbGVwc3k9PTEgJiBydmlzJGFzZF9kaXNnZW5ldD09MSAmIHJ2aXMkaWRfZGlzZ2VuZXQgPT0gMSAmIHJ2aXMkc3ogPT0gMSwgMSwgMClcbnJ2aXMkTkREPC1hcy5mYWN0b3IocnZpcyROREQpXG5cbiMgZm9yIHNvbWUgc3VtbWFyeSBzdGF0cy4gXG4jIHRhcHBseShydmlzJHJ2aXMsIHJ2aXMkTkRELCBzdW1tYXJ5KSBcbmBgYFxuYGBgIn0= -->
+<pre class="r"><code>```r
+rvis &lt;- rvis %&gt;% mutate(chr = as.numeric(gsub(\[a-z]\, \\, chr)))
 rvis$chr&lt;-as.factor(rvis$chr)
 
 rvis$NDD&lt;-ifelse(rvis$epilepsy==1 &amp; rvis$asd_disgenet==1 &amp; rvis$id_disgenet == 1 &amp; rvis$sz == 1, 1, 0)
@@ -2069,21 +2295,37 @@ rvis$NDD&lt;-as.factor(rvis$NDD)
 
 # for some summary stats. 
 # tapply(rvis$rvis, rvis$NDD, summary) </code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Save this file. All subsequent analyses are performed using this
-file:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud3JpdGVfY3N2KHJ2aXMsIGZpbGU9XCJydmlzX3Jlc3VsdHNfYW5ub3RhdGVkLmNzdlwiLCBjb2xfbmFtZXM9VFJVRSlcbmBgYCJ9 -->
-<pre class="r"><code>write_csv(rvis, file=&quot;rvis_results_annotated.csv&quot;, col_names=TRUE)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+
+Save this file. All subsequent analyses are performed using this file:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxud3JpdGVfY3N2KHJ2aXMsIGZpbGU9XFxydmlzX3Jlc3VsdHNfYW5ub3RhdGVkLmNzdlxcLCBjb2xfbmFtZXM9VFJVRSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+write_csv(rvis, file=\rvis_results_annotated.csv\, col_names=TRUE)</code></pre>
+<p>```</p>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogImdlbmVyYXRlUlZJUyINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNClRoaXMgaXMgYW4gW1IgTWFya2Rvd25dKGh0dHA6Ly9ybWFya2Rvd24ucnN0dWRpby5jb20pIE5vdGVib29rLiBXaGVuIHlvdSBleGVjdXRlIGNvZGUgd2l0aGluIHRoZSBub3RlYm9vaywgdGhlIHJlc3VsdHMgYXBwZWFyIGJlbmVhdGggdGhlIGNvZGUuIA0KDQpUcnkgZXhlY3V0aW5nIHRoaXMgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwDQoNCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg0KU2V0IHVwIHBhdGgsIGRpcmVjdG9yaWVzIGV0YzoNCg0KYGBge3J9DQpzZXR3ZChkaXJuYW1lKHJzdHVkaW9hcGk6OmdldEFjdGl2ZURvY3VtZW50Q29udGV4dCgpJHBhdGgpKQ0KZGlyLmNyZWF0ZShmaWxlLnBhdGgoInJ2aXMiKSkNCmxpYnJhcnkodGlkeXZlcnNlKQ0Kb3B0aW9ucyh0aWJibGUud2lkdGggPSBJbmYpIA0Kb3B0aW9ucyh0aWJibGUucHJpbnRfbWF4ID0gSW5mKSANCmBgYA0KDQpTdGFydGluZyB3aXRoIHRoZSBRQydkIHZjZiBmaWxlcywgZ2VuZXJhdGUgdGFibGVzIG9mIGZyZXF1ZW5jaWVzIG9mIGRpZmZlcmVudCB0eXBlcyBvZiB2YXJpYW50IG9uIGdlbmUtYnktZ2VuZSBiYXNpczogDQoNCmBgYHt6c2ggZW5naW5lLm9wdHM9Jy1pJ30NCmZvciBudW0gaW4gezEuLjIwfTsgDQpkbyBiY2Z0b29scyB2aWV3IC1HIC1lICdJTkZPL0FGIDwgMC4wMSB8IElORk8vQU5OIH4gImludGVyZ2VuaWNfcmVnaW9uIiAnIC1PdiBjaHIkY2hyLnZjZi5neiB8IGdyZXAgLXYgJ14jJyB8IGF3ayAtRiAnfCcgJ0JFR0lOe1NVQlNFUD1PRlM9RlN9IHthWyQyLCAkNF0rK31FTkQge2ZvciAoaSBpbiBhKSBwcmludCBpLCBhW2ldfScgPiByZXN1bHRzJG51bS50eHQ7DQpkb25lDQpgYGANCg0KQWRkIGNocm9tb3NvbWUgY29sdW1uIHRvIGVhY2ggb25lICh3aGljaCBjYW4gYmUgYXV0b21hdGVkIHdpdGggdGhlIGFib3ZlKToNCg0KYGBge3pzaCBlbmdpbmUub3B0cz0nLWknfQ0KYXdrIC1GICd8JyAtdiBPRlM9Ilx0IiAneyQoTkYrMSkgPSAiY2hyWCI7IHByaW50fScgIHJlc3VsdHMkbnVtLnR4dCA+IHJlc3VsdHMkbnVtLnR4dCANCmBgYA0KDQpQcm9jZXNzIHRoZXNlIGZpbGVzIGluIFIgLS0gdGhlc2UgYXJlIHN0ZXAgYnkgc3RlcCBpbnN0cnVjdGlvbnMgZm9yIGlsbHVzdHJhdGl2ZSBwdXJwb3Nlcy4gRnVydGhlciBiZWxvdyBpcyBhIGJsb2NrIG9mIHRleHQgdG8gYXV0b21hdGUgdGhpcyBpbiBhIGxvb3AuDQoNClNldHVwOg0KDQpgYGB7cn0NCiNvbmx5IGZpbGVzIHRvIG1vZGlmeQ0KcmVzdWx0cyA8LSJyZXN1bHRzMS50eHQiICNtb2RpZnkgZm9yIGVhY2ggY2hyb21vc29tZQ0Kb3V0ZmlsZSA8LSAicnZpcy9ydmlzMS50eHQiICNtb2RpZnkgZm9yIGVhY2ggY2hyb21vc29tZQ0KYGBgDQoNCg0KYGBge3J9DQpyZXN1bHRzPC1yZWFkX3RzdihyZXN1bHRzLCBjb2xfbmFtZXM9RikNCnJlc3VsdHM8LXJlc3VsdHMgJT4lIHBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSBYMSwgdmFsdWVzX2Zyb20gPSBYMykNCnJlc3VsdHNbaXMubmEocmVzdWx0cyldPC0gMA0KYGBgDQoNClRoaXMgcHJvZHVjZXMgYSB0aWJibGUuDQoNCg0KTmV4dCB5b3Ugd2FudCB0byBjb21iaW5lIGFsbCB0aGUgcm93cyB3aXRoIG5vbnN5bm9ueW1vdXMgbXV0YXRpb25zLiBUaGVzZSBpbmNsdWRlIG1pc3NlbnNlIG11dGF0aW9ucyBhbmQgYWxsIG11dGF0aW9uIHR5cGVzIGFubm90YXRlZCBpbiBTbnBFZmYgYXMgSElHSCBvciBNT0RFUkFURSBpbXBhY3Q6DQoNCmBgYHtyfQ0KYGB7cn0NCnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShkYW1hZ2luZyA9IHJvd1N1bXMoc2VsZWN0KC4sIGNvbnRhaW5zKGMoInN0b3BfbG9zdCIsICJzdG9wX2dhaW5lZCIsICJzcGxpY2VfYWNjZXB0b3IiLCAic3BsaWNlX2Rvbm9yIiwgIm1pc3NlbnNlIiwgImZyYW1lc2hpZnQiLCAic3RhcnRfbG9zdCIsICJzdGFydF9nYWluZWQiLCAibWlzc2Vuc2UiLCAic3BsaWNlX3JlZ2lvbiIsICJkaXNydXB0aXZlX2luZnJhbWUiLCAiY29kaW5nX3NlcXVlbmNlIiwgImNvbnNlcnZhdGl2ZV9pbmZyYW1lIikpKSkpDQpgYGANCg0KUmVtb3ZlIGdlbmVzIHdpdGggbmVpdGhlciBzeW5vbnltb3VzIG5vciBub25zeW5vbnltb3VzIHZhcmlhbnRzICh1bmluZm9ybWF0aXZlKToNCg0KYGBge3J9DQpyZXN1bHRzPC1yZXN1bHRzWyEocmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPT0gMCAmIHJlc3VsdHMkZGFtYWdpbmcgPT0gMCksIF0NCmBgYA0KDQpXaGVuIGNhbGN1bGF0aW5nIHJhdGlvIG9mIGRhbWFnaW5nIHRvIHN5bm9ueW1vdXMgdmFyaWFudHMsIHRob3NlIHZhcmlhbnRzIHdpdGggMCBkYW1hZ2luZyAobm9uLXN5bm9ueW1vdXMpIHdpbGwgZ2VuZXJhdGUgYSByYXRpbyBvZiAwIHdoaWNoIGlzIGZpbmUuIEhvd2V2ZXIsIHRvIGF2b2lkIGRpdmlkaW5nIGJ5IDAgKGFuZCBnZW5lcmF0aW5nICdpbmYnIGluIFIpLCBhZGQgMSB0byBhbGwgdmFsdWVzIGluIHN5bm9ueW1vdXMgdmFyaWFudCBjb2x1bW46DQoNCmBgYHtyfQ0KcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyAxDQpgYGANCg0KTm93IGdlbmVyYXRlIGRhbWFnaW5nIChpLmUubm9uc3lub255bW91cy9zeW5vbnltb3VzIHJhdGlvKSBhbmQgdG90YWwgdmFyaWFudHMgcGVyIGdlbmU6DQoNCmBgYHtyfQ0KcmVzdWx0czwtcmVzdWx0cyAlPiUgbXV0YXRlKHJhdGlvPWRhbWFnaW5nL3N5bm9ueW1vdXNfdmFyaWFudCkNCnJlc3VsdHMkdG90YWw8LSByZXN1bHRzJHN5bm9ueW1vdXNfdmFyaWFudCArIHJlc3VsdHMkZGFtYWdpbmcNCmBgYA0KDQpOZXh0LCBsYWJlbCBjb2x1bW5zOg0KDQpgYGB7cn0NCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDIiXTwtICJoZ25jX3N5bWJvbCINCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDQiXTwtICJjaHIiDQpgYGANCg0KTmV4dCwgeW91IG5lZWQgdG8gYWRkIGdlbmUgbGVuZ3RocyB0byB0aGlzIHRhYmxlLiBGaXJzdCBpbXBvcnQgdGhlIGdmZiBmaWxlIGFuZCBhZGQgY29sdW1uIG5hbWVzIGFuZCBjYWxjdWxhdGUgbmV3IHJvdyBvZiBnZW5lIGxlbmd0aHM6DQoNCmBgYHtyfQ0KbWFjYWNhX2dlbmVzPC1yZWFkLmRlbGltKCJtYWNhY2FfYnVpbGQxMC5nZmYiLCBoZWFkZXI9Riwgc2VwPSJcdCIsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKQ0KbmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT0iVjUiXTwtICJoZ25jX3N5bWJvbCINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlYxIl08LSAiY2hyIg0KbmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT0iVjIiXTwtICJzdGFydCINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlYzIl08LSAiZW5kIg0KbmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT0iVjQiXTwtICJuY2JpX2lkIg0KbWFjYWNhX2dlbmVzJGxlbmd0aDwtbWFjYWNhX2dlbmVzJGVuZCAtIG1hY2FjYV9nZW5lcyRzdGFydA0KYGBgDQoNCkV4dHJhY3QgZ2VuZXMgb24gY2hyb21vc29tZToNCg0KYGBge3J9DQp0cmFuc2NyaXB0IDwtIG1hY2FjYV9nZW5lc1ttYWNhY2FfZ2VuZXMkY2hyPT0iMSIsXSANCmBgYA0KDQpNZXJnZToNCg0KYGBge3J9DQpyZXN1bHRzPC1tZXJnZShyZXN1bHRzLCB0cmFuc2NyaXB0LCBieT0iaGduY19zeW1ib2wiLCBhbGwuWD1ULCBhbGwueT1GKQ0KYGBgDQoNCkV4dHJhY3QgcmVsZXZhbnQgY29sdW1uczoNCg0KYGBge3J9DQpyZXN1bHRzIDwtIHJlc3VsdHNbLCBjKCJoZ25jX3N5bWJvbCIsICJjaHIueCIsICJzeW5vbnltb3VzX3ZhcmlhbnQiLCAiZGFtYWdpbmciLCAicmF0aW8iLCAidG90YWwiLCAic3RhcnQiLCAiZW5kIiwgImxlbmd0aCIpXQ0KYGBgDQoNClNhdmU6DQoNCmBgYHtyfQ0Kd3JpdGVfY3N2KHJlc3VsdHMsIGZpbGUgPSBvdXRmaWxlLCBjb2xfbmFtZXM9VCkNCmBgYA0KDQpBdXRvbWF0ZWQgdmVyc2lvbiBvZiBhYm92ZSBjb2RlOg0KDQpgYGB7cn0NCm1hY2FjYV9nZW5lczwtcmVhZC5kZWxpbSgibWFjYWNhX2J1aWxkMTAuZ2ZmIiwgaGVhZGVyPUYsIHNlcD0iXHQiLCBzdHJpbmdzQXNGYWN0b3JzID0gRikNCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlY1Il08LSAiaGduY19zeW1ib2wiDQpuYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PSJWMSJdPC0gImNociINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlYyIl08LSAic3RhcnQiDQpuYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PSJWMyJdPC0gImVuZCINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlY0Il08LSAibmNiaV9pZCINCm1hY2FjYV9nZW5lcyRsZW5ndGg8LW1hY2FjYV9nZW5lcyRlbmQgLSBtYWNhY2FfZ2VuZXMkc3RhcnQNCg0KZmlsZXMgPC0gbGlzdC5maWxlcyhwYXRoPSIvcGF0aC90by9maWxlcyIsIHBhdHRlcm49IioudHh0IiwgZnVsbC5uYW1lcz1UUlVFKQ0KdGhlX2RpcjwtICIvcGF0aC90by9kaXIiDQpmb3IgKGZpbGUgaW4gZmlsZXMpew0KCXJlc3VsdHM8LXJlYWRfdHN2KGZpbGUsIGNvbF9uYW1lcz1GKQ0KCXJlc3VsdHM8LXJlc3VsdHMgJT4lIHBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSBYMSwgdmFsdWVzX2Zyb20gPSBYMykNCnJlc3VsdHNbaXMubmEocmVzdWx0cyldPC0gMA0KDQpyZXN1bHRzPC1yZXN1bHRzICU+JSBtdXRhdGUoZGFtYWdpbmcgPSByb3dTdW1zKHNlbGVjdCguLCBjb250YWlucyhjKCJzdG9wX2xvc3QiLCAic3RvcF9nYWluZWQiLCAic3BsaWNlX2FjY2VwdG9yIiwgInNwbGljZV9kb25vciIsICJtaXNzZW5zZSIsICJmcmFtZXNoaWZ0IiwgInN0YXJ0X2xvc3QiLCAic3RhcnRfZ2FpbmVkIiwgIm1pc3NlbnNlIiwgInNwbGljZV9yZWdpb24iLCAiZGlzcnVwdGl2ZV9pbmZyYW1lIiwgImNvZGluZ19zZXF1ZW5jZSIsICJjb25zZXJ2YXRpdmVfaW5mcmFtZSIpKSkpKQ0KDQpyZXN1bHRzPC1yZXN1bHRzWyEocmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPT0gMCAmIHJlc3VsdHMkZGFtYWdpbmcgPT0gMCksIF0NCg0KcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyAxDQoNCnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShyYXRpbz1kYW1hZ2luZy9zeW5vbnltb3VzX3ZhcmlhbnQpDQpyZXN1bHRzJHRvdGFsPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyByZXN1bHRzJGRhbWFnaW5nDQoNCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDIiXTwtICJoZ25jX3N5bWJvbCINCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDQiXTwtICJjaHIiDQoNCnJlc3VsdHM8LW1lcmdlKHJlc3VsdHMsIG1hY2FjYV9nZW5lcywgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLlg9VCwgYWxsLnk9RikNCg0KcmVzdWx0cyA8LSByZXN1bHRzWywgYygiaGduY19zeW1ib2wiLCAiY2hyLngiLCAic3lub255bW91c192YXJpYW50IiwgImRhbWFnaW5nIiwgInJhdGlvIiwgInRvdGFsIiwgInN0YXJ0IiwgImVuZCIsICJsZW5ndGgiKV0NCg0Kd3JpdGVfY3N2KHJlc3VsdHMsIGZpbGU9IHBhc3RlMCh0aGVfZGlyLCAiLyIsIGJhc2VuYW1lKGZpbGUpKSwgY29sX25hbWVzPVQpDQp9DQpgYGANCg0KRmluYWxseSBjYWxjdWxhdGUgcnZpcyBzY29yZXMuIEZpcnN0IGNvbWJpbmUgYWxsIGZpbGVzIGdlbmVyYXRlZCBhYm92ZSBpbnRvIG9uZToNCg0KYGBge3J9DQpmaWxlcyAgPC0gbGlzdC5maWxlcyhwYXR0ZXJuID0gJ1xcLnR4dCcpDQp0YWJsZXMgPC0gbGFwcGx5KGZpbGVzLCByZWFkLmNzdiwgaGVhZGVyID0gVFJVRSkNCmNvbWJpbmVkIDwtIGRvLmNhbGwocmJpbmQsIHRhYmxlcykNCiN3cml0ZV9jc3YoY29tYmluZWQsIGZpbGU9ImNvbWJpbmVkLnR4dCIsIGNvbF9uYW1lcz1UKQ0KI2NvbWJpbmVkPC1yZWFkX2NzdigiY29tYmluZWQudHh0IiwgY29sX25hbWVzID0gVCkNCmxtLnIgPSBsbShkYW1hZ2luZyB+IHRvdGFsLCBkYXRhPWNvbWJpbmVkKQ0Kc3VtbWFyeShsbS5yKQ0KI2NvZWYobG0ucikgIyBnaXZlcyB0aGUgbW9kZWzigJlzIGNvZWZmaWNpZW50cw0KI2ZpdHRlZChsbS5yKSAjIGdpdmVzIHRoZSBwcmVkaWN0ZWQgdmFsdWVzIGZvciBZLCBpLmUuICB0aGUgZXhwZWN0ZWQgYnVyZGVuIG9mIG1pc3NlbnNlIG11dGF0aW9ucw0KI3Jlc2lkKGxtLnIpICMgZ2l2ZXMgdGhlIHJlc2lkdWFsIGVycm9ycyBpbiBZDQojY29lZihsbS5yKSAjIGdpdmVzIHRoZSBtb2RlbOKAmXMgY29lZmZpY2llbnRzDQogIA0KI2xheW91dChtYXRyaXgoMTo0LDIsMikpDQojcGxvdChsbS5yKQ0KICANCiNhZGQgcmVzaWR1YWxzIGFuZCBmaXR0ZWQgdmFsdWVzIHRvIGNvbWJpbmVkIGRhdGEgZnJhbWUNCmNvbWJpbmVkJHJlc2lkPC1yZXNpZChsbS5yKQ0KY29tYmluZWQkZml0dGVkPC1maXR0ZWQobG0ucikNCiAgDQojZ2VuZXJhdGUgY29sdW1uIG9mIHN0dWRlbnRpemVkIHJlc2lkdWFscyAtLSB0aGUgcnZpcyBzY29yZQ0Kc2QoY29tYmluZWQkcmVzaWQpDQpjb21iaW5lZCRydmlzIDwtIGNvbWJpbmVkJHJlc2lkLzMuMjM5DQogIA0KI3NhdmUgdGhpcyBkYXRhLmZyYW1lDQp3cml0ZV9jc3YoY29tYmluZWQsIGZpbGU9InJ2aXMtcmVzdWx0cy50eHQiLCBjb2xfbmFtZXM9VCkNCmBgYA0KDQoNCk5vdGU6IFBvc2l0aXZlIFJWSVMgc2NvcmVzIGluZGljYXRlIHRoYXQgdGhlcmUgYXJlIGEgZ3JlYXRlciBudW1iZXIgb2YgZGFtYWdpbmcgdmFyaWFudHMgdGhhbiBleHBlY3RlZCAtLSBwcmVzdW1hYmx5IHRoZSBnZW5lIGlzIHRvbGVyYW50IG9mIG11dGF0aW9ucy4gQW5kIHZpY2UgdmVyc2EgZm9yIG5lZ2F0aXZlIFJWSVMgc2NvcmVzLiANCg0KWW91IG5vdyBuZWVkIHRvIGFkZCBleHRyYSBjb2x1bW5zIHRvIGVhcm1hcmsgZGlzb3JkZXIgc3BlY2lmaWMgZ2VuZXM6DQoNCmBgYHtyfQ0KIyByZWFkIGluIHRoZSBmaWxlIHlvdSBoYXZlIGdlbmVyYXRlZA0KcnZpczwtcmVhZC5jc3YoInJ2aXMvcnZpcy1yZXN1bHRzLnR4dCIsIGhlYWRlcj1UKQ0KDQojcmVhZCBpbiBsaXN0IG9mIFNGQVJJIGdlbmVzDQpzZmFyaS5hc2Q8LXJlYWQuZGVsaW0oIi9wYXRoL3RvL2ZpbGVzL1NGQVJJLWFzZC1nZW5lcy5jc3YiLCBoZWFkZXI9VCwgc2VwPSIsIiwgc3RyaW5nc0FzRmFjdG9ycyA9IEYpDQpuYW1lcyhzZmFyaS5hc2QpW25hbWVzKHNmYXJpLmFzZCk9PSJnZW5lLnN5bWJvbCJdPC0iaGduY19zeW1ib2wiIA0Kc2ZhcmkuYWxsPC0gc2ZhcmkuYXNkWywgYygyLDUpXQ0Kc2ZhcmkuYWxsJHNmYXJpX2FsbDwtIjEiDQpydmlzPC1tZXJnZShzZmFyaS5hbGwsIHJ2aXMsIGJ5PSJoZ25jX3N5bWJvbCIsIGFsbC54PUYsIGFsbC55PVQpDQpydmlzJHNmYXJpX2FsbFtpcy5uYShydmlzJHNmYXJpX2FsbCldPC0wDQpuYW1lcyhydmlzKVtuYW1lcyhydmlzKT09ImNoci54Il08LSJjaHIiDQpydmlzIDwtIHJ2aXMgJT4lIHNlbGVjdCgtY29udGFpbnMoYygnY2hyb20nLCAnZW5zZW1iJykpKSAjdGlkeWluZyB1cA0KYGBgDQoNCg0KSWRlbnRpY2FsIHByb2Nlc3MgZm9yIG90aGVyIGdlbmUgc2V0czoNCg0KYGBge3J9DQplcGlsZXBzeV9kaXNnZW5ldDwtcmVhZC5kZWxpbSgiL3BhdGgvdG8vZmlsZXMvZXBpbGVwc3lfZGlzZ2VuZXQudHh0Iiwgc2VwPSIsIiwgaGVhZGVyPVQsIHN0cmluZ3NBc0ZhY3RvcnM9RikNCmVwaWxlcHN5X2Rpc2dlbmV0JGVwaWxlcHN5PC0iMSINCmVwaWxlcHN5PC1lcGlsZXBzeV9kaXNnZW5ldFssIGMoMSwgNCldDQpuYW1lcyhlcGlsZXBzeSlbbmFtZXMoZXBpbGVwc3kpPT0iR2VuZSJdPC0iaGduY19zeW1ib2wiDQpydmlzPC1tZXJnZShydmlzLCBlcGlsZXBzeSwgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9VCwgYWxsLnk9RikNCnJ2aXMkZXBpbGVwc3lbaXMubmEocnZpcyRlcGlsZXBzeSldPC0wDQoNCmFzZF9kaXNnZW5ldDwtcmVhZC5kZWxpbSgiL3BhdGgvdG8vZmlsZXMvYXNkX2Rpc2dlbmV0LnR4dCIsIHNlcD0iXHQiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycz1GKQ0KYXNkX2Rpc2dlbmV0JGFzZF9kaXNnZW5ldDwtIjEiDQphc2Q8LWFzZF9kaXNnZW5ldFssIGMoMSwgNCldDQpuYW1lcyhhc2QpW25hbWVzKGFzZCk9PSJHZW5lIl08LSJoZ25jX3N5bWJvbCINCnJ2aXM8LW1lcmdlKHJ2aXMsIGFzZCwgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9VCwgYWxsLnk9RikNCnJ2aXMkYXNkX2Rpc2dlbmV0W2lzLm5hKHJ2aXMkYXNkX2Rpc2dlbmV0KV08LTANCiAgDQppZF9kaXNnZW5ldDwtcmVhZC5kZWxpbSgicGF0aC90by9maWxlcy9pZF9kaXNnZW5ldC50eHQiLCBzZXA9Ilx0IiwgaGVhZGVyPVQsIHN0cmluZ3NBc0ZhY3RvcnM9RikNCmlkX2Rpc2dlbmV0JGlkX2Rpc2dlbmV0PC0iMSINCmlkPC1pZF9kaXNnZW5ldFssIGMoMSwgNCldDQpuYW1lcyhpZClbbmFtZXMoaWQpPT0iR2VuZSJdPC0iaGduY19zeW1ib2wiDQpydmlzPC1tZXJnZShydmlzLCBpZCwgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9VCwgYWxsLnk9RikNCnJ2aXMkaWRfZGlzZ2VuZXRbaXMubmEocnZpcyRpZF9kaXNnZW5ldCldPC0wDQogDQpzel9kaXNnZW5ldDwtcmVhZC5kZWxpbSgiL3BhdGgvdG8vZmlsZXMvc3pfZGlzZ2VuZXQudHh0Iiwgc2VwPSIsIiwgaGVhZGVyPVQsIHN0cmluZ3NBc0ZhY3RvcnM9RikNCnN6X2Rpc2dlbmV0JHN6PC0iMSINCnN6PC1zel9kaXNnZW5ldFssIGMoMSwgNCldDQpuYW1lcyhzeilbbmFtZXMoc3opPT0iR2VuZSJdPC0iaGduY19zeW1ib2wiDQpydmlzPC1tZXJnZShydmlzLCBzeiwgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9VCwgYWxsLnk9RikNCnJ2aXMkc3pbaXMubmEocnZpcyRzeildPC0wDQpgYGANCg0KQW5kIGZvciBOREQgZ2VuZXM6IHRoZXNlIGFyZSBnZW5lcyB0aGF0IG92ZXJsYXAgYWxsIGRpc29yZGVycyAobm90ZSB0aGUgbmVlZCB0byBjb252ZXJ0IHRoZSBjaHIgY29sdW1uKQ0KDQpgYGB7cn0NCnJ2aXMgPC0gcnZpcyAlPiUgbXV0YXRlKGNociA9IGFzLm51bWVyaWMoZ3N1YigiW2Etel0iLCAiIiwgY2hyKSkpDQpydmlzJGNocjwtYXMuZmFjdG9yKHJ2aXMkY2hyKQ0KDQpydmlzJE5ERDwtaWZlbHNlKHJ2aXMkZXBpbGVwc3k9PTEgJiBydmlzJGFzZF9kaXNnZW5ldD09MSAmIHJ2aXMkaWRfZGlzZ2VuZXQgPT0gMSAmIHJ2aXMkc3ogPT0gMSwgMSwgMCkNCnJ2aXMkTkREPC1hcy5mYWN0b3IocnZpcyROREQpDQoNCiMgZm9yIHNvbWUgc3VtbWFyeSBzdGF0cy4gDQojIHRhcHBseShydmlzJHJ2aXMsIHJ2aXMkTkRELCBzdW1tYXJ5KSANCmBgYA0KDQoNClNhdmUgdGhpcyBmaWxlLiBBbGwgc3Vic2VxdWVudCBhbmFseXNlcyBhcmUgcGVyZm9ybWVkIHVzaW5nIHRoaXMgZmlsZToNCg0KYGBge3J9DQp3cml0ZV9jc3YocnZpcywgZmlsZT0icnZpc19yZXN1bHRzX2Fubm90YXRlZC5jc3YiLCBjb2xfbmFtZXM9VFJVRSkNCmBgYA0KDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogImdlbmVyYXRlUlZJUyINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNClRoaXMgaXMgYW4gW1IgTWFya2Rvd25dKGh0dHA6Ly9ybWFya2Rvd24ucnN0dWRpby5jb20pIE5vdGVib29rLiBXaGVuIHlvdSBleGVjdXRlIGNvZGUgd2l0aGluIHRoZSBub3RlYm9vaywgdGhlIHJlc3VsdHMgYXBwZWFyIGJlbmVhdGggdGhlIGNvZGUuIA0KDQpFeGVjdXRlIGNvZGUgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwDQoNCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg0KU2V0IHVwIHBhdGgsIGRpcmVjdG9yaWVzIGV0YzoNCg0KYGBge3J9DQpzZXR3ZChkaXJuYW1lKHJzdHVkaW9hcGk6OmdldEFjdGl2ZURvY3VtZW50Q29udGV4dCgpJHBhdGgpKQ0KZGlyLmNyZWF0ZShmaWxlLnBhdGgoInJ2aXMiKSkNCmxpYnJhcnkodGlkeXZlcnNlKQ0Kb3B0aW9ucyh0aWJibGUud2lkdGggPSBJbmYpIA0Kb3B0aW9ucyh0aWJibGUucHJpbnRfbWF4ID0gSW5mKSANCmBgYA0KDQpTdGFydGluZyB3aXRoIHRoZSBRQydkIHZjZiBmaWxlcywgZ2VuZXJhdGUgdGFibGVzIG9mIGZyZXF1ZW5jaWVzIG9mIGRpZmZlcmVudCB0eXBlcyBvZiB2YXJpYW50IG9uIGdlbmUtYnktZ2VuZSBiYXNpczogDQoNCmBgYHt6c2ggZW5naW5lLm9wdHM9Jy1pJ30NCmZvciBudW0gaW4gezEuLjIwfTsgDQpkbyBiY2Z0b29scyB2aWV3IC1HIC1lICdJTkZPL0FGIDwgMC4wMSB8IElORk8vQU5OIH4gImludGVyZ2VuaWNfcmVnaW9uIiAnIC1PdiBjaHIkY2hyLnZjZi5neiB8IGdyZXAgLXYgJ14jJyB8IGF3ayAtRiAnfCcgJ0JFR0lOe1NVQlNFUD1PRlM9RlN9IHthWyQyLCAkNF0rK31FTkQge2ZvciAoaSBpbiBhKSBwcmludCBpLCBhW2ldfScgPiByZXN1bHRzJG51bS50eHQ7DQpkb25lDQpgYGANCg0KQWRkIGNocm9tb3NvbWUgY29sdW1uIHRvIGVhY2ggb25lICh3aGljaCBjYW4gYmUgYXV0b21hdGVkIHdpdGggdGhlIGFib3ZlKToNCg0KYGBge3pzaCBlbmdpbmUub3B0cz0nLWknfQ0KYXdrIC1GICd8JyAtdiBPRlM9Ilx0IiAneyQoTkYrMSkgPSAiY2hyWCI7IHByaW50fScgIHJlc3VsdHMkbnVtLnR4dCA+IHJlc3VsdHMkbnVtLnR4dCANCmBgYA0KDQpQcm9jZXNzIHRoZXNlIGZpbGVzIGluIFIgLS0gdGhlc2UgYXJlIHN0ZXAgYnkgc3RlcCBpbnN0cnVjdGlvbnMgZm9yIGlsbHVzdHJhdGl2ZSBwdXJwb3Nlcy4gRnVydGhlciBiZWxvdyBpcyBhIGJsb2NrIG9mIHRleHQgdG8gYXV0b21hdGUgdGhpcyBpbiBhIGxvb3AuDQoNClNldHVwOg0KDQpgYGB7cn0NCiNvbmx5IGZpbGVzIHRvIG1vZGlmeQ0KcmVzdWx0cyA8LSJyZXN1bHRzMS50eHQiICNtb2RpZnkgZm9yIGVhY2ggY2hyb21vc29tZQ0Kb3V0ZmlsZSA8LSAicnZpcy9ydmlzMS50eHQiICNtb2RpZnkgZm9yIGVhY2ggY2hyb21vc29tZQ0KYGBgDQoNCg0KYGBge3J9DQpyZXN1bHRzPC1yZWFkX3RzdihyZXN1bHRzLCBjb2xfbmFtZXM9RikNCnJlc3VsdHM8LXJlc3VsdHMgJT4lIHBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSBYMSwgdmFsdWVzX2Zyb20gPSBYMykNCnJlc3VsdHNbaXMubmEocmVzdWx0cyldPC0gMA0KYGBgDQoNClRoaXMgcHJvZHVjZXMgYSB0aWJibGUuDQoNCg0KTmV4dCB5b3Ugd2FudCB0byBjb21iaW5lIGFsbCB0aGUgcm93cyB3aXRoIG5vbnN5bm9ueW1vdXMgbXV0YXRpb25zLiBUaGVzZSBpbmNsdWRlIG1pc3NlbnNlIG11dGF0aW9ucyBhbmQgYWxsIG11dGF0aW9uIHR5cGVzIGFubm90YXRlZCBpbiBTbnBFZmYgYXMgSElHSCBvciBNT0RFUkFURSBpbXBhY3Q6DQoNCmBgYHtyfQ0KYGB7cn0NCnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShkYW1hZ2luZyA9IHJvd1N1bXMoc2VsZWN0KC4sIGNvbnRhaW5zKGMoInN0b3BfbG9zdCIsICJzdG9wX2dhaW5lZCIsICJzcGxpY2VfYWNjZXB0b3IiLCAic3BsaWNlX2Rvbm9yIiwgIm1pc3NlbnNlIiwgImZyYW1lc2hpZnQiLCAic3RhcnRfbG9zdCIsICJzdGFydF9nYWluZWQiLCAibWlzc2Vuc2UiLCAic3BsaWNlX3JlZ2lvbiIsICJkaXNydXB0aXZlX2luZnJhbWUiLCAiY29kaW5nX3NlcXVlbmNlIiwgImNvbnNlcnZhdGl2ZV9pbmZyYW1lIikpKSkpDQpgYGANCg0KUmVtb3ZlIGdlbmVzIHdpdGggbmVpdGhlciBzeW5vbnltb3VzIG5vciBub25zeW5vbnltb3VzIHZhcmlhbnRzICh1bmluZm9ybWF0aXZlKToNCg0KYGBge3J9DQpyZXN1bHRzPC1yZXN1bHRzWyEocmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPT0gMCAmIHJlc3VsdHMkZGFtYWdpbmcgPT0gMCksIF0NCmBgYA0KDQpXaGVuIGNhbGN1bGF0aW5nIHJhdGlvIG9mIGRhbWFnaW5nIHRvIHN5bm9ueW1vdXMgdmFyaWFudHMsIHRob3NlIHZhcmlhbnRzIHdpdGggMCBkYW1hZ2luZyAobm9uLXN5bm9ueW1vdXMpIHdpbGwgZ2VuZXJhdGUgYSByYXRpbyBvZiAwIHdoaWNoIGlzIGZpbmUuIEhvd2V2ZXIsIHRvIGF2b2lkIGRpdmlkaW5nIGJ5IDAgKGFuZCBnZW5lcmF0aW5nICdpbmYnIGluIFIpLCBhZGQgMSB0byBhbGwgdmFsdWVzIGluIHN5bm9ueW1vdXMgdmFyaWFudCBjb2x1bW46DQoNCmBgYHtyfQ0KcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyAxDQpgYGANCg0KTm93IGdlbmVyYXRlIGRhbWFnaW5nIChpLmUubm9uc3lub255bW91cy9zeW5vbnltb3VzIHJhdGlvKSBhbmQgdG90YWwgdmFyaWFudHMgcGVyIGdlbmU6DQoNCmBgYHtyfQ0KcmVzdWx0czwtcmVzdWx0cyAlPiUgbXV0YXRlKHJhdGlvPWRhbWFnaW5nL3N5bm9ueW1vdXNfdmFyaWFudCkNCnJlc3VsdHMkdG90YWw8LSByZXN1bHRzJHN5bm9ueW1vdXNfdmFyaWFudCArIHJlc3VsdHMkZGFtYWdpbmcNCmBgYA0KDQpOZXh0LCBsYWJlbCBjb2x1bW5zOg0KDQpgYGB7cn0NCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDIiXTwtICJoZ25jX3N5bWJvbCINCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDQiXTwtICJjaHIiDQpgYGANCg0KTmV4dCwgeW91IG5lZWQgdG8gYWRkIGdlbmUgbGVuZ3RocyB0byB0aGlzIHRhYmxlLiBGaXJzdCBpbXBvcnQgdGhlIGdmZiBmaWxlIGFuZCBhZGQgY29sdW1uIG5hbWVzIGFuZCBjYWxjdWxhdGUgbmV3IHJvdyBvZiBnZW5lIGxlbmd0aHM6DQoNCmBgYHtyfQ0KbWFjYWNhX2dlbmVzPC1yZWFkLmRlbGltKCJtYWNhY2FfYnVpbGQxMC5nZmYiLCBoZWFkZXI9Riwgc2VwPSJcdCIsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKQ0KbmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT0iVjUiXTwtICJoZ25jX3N5bWJvbCINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlYxIl08LSAiY2hyIg0KbmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT0iVjIiXTwtICJzdGFydCINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlYzIl08LSAiZW5kIg0KbmFtZXMobWFjYWNhX2dlbmVzKVtuYW1lcyhtYWNhY2FfZ2VuZXMpPT0iVjQiXTwtICJuY2JpX2lkIg0KbWFjYWNhX2dlbmVzJGxlbmd0aDwtbWFjYWNhX2dlbmVzJGVuZCAtIG1hY2FjYV9nZW5lcyRzdGFydA0KYGBgDQoNCkV4dHJhY3QgZ2VuZXMgb24gY2hyb21vc29tZToNCg0KYGBge3J9DQp0cmFuc2NyaXB0IDwtIG1hY2FjYV9nZW5lc1ttYWNhY2FfZ2VuZXMkY2hyPT0iMSIsXSANCmBgYA0KDQpNZXJnZToNCg0KYGBge3J9DQpyZXN1bHRzPC1tZXJnZShyZXN1bHRzLCB0cmFuc2NyaXB0LCBieT0iaGduY19zeW1ib2wiLCBhbGwuWD1ULCBhbGwueT1GKQ0KYGBgDQoNCkV4dHJhY3QgcmVsZXZhbnQgY29sdW1uczoNCg0KYGBge3J9DQpyZXN1bHRzIDwtIHJlc3VsdHNbLCBjKCJoZ25jX3N5bWJvbCIsICJjaHIueCIsICJzeW5vbnltb3VzX3ZhcmlhbnQiLCAiZGFtYWdpbmciLCAicmF0aW8iLCAidG90YWwiLCAic3RhcnQiLCAiZW5kIiwgImxlbmd0aCIpXQ0KYGBgDQoNClNhdmU6DQoNCmBgYHtyfQ0Kd3JpdGVfY3N2KHJlc3VsdHMsIGZpbGUgPSBvdXRmaWxlLCBjb2xfbmFtZXM9VCkNCmBgYA0KDQpBdXRvbWF0ZWQgdmVyc2lvbiBvZiBhYm92ZSBjb2RlOg0KDQpgYGB7cn0NCm1hY2FjYV9nZW5lczwtcmVhZC5kZWxpbSgibWFjYWNhX2J1aWxkMTAuZ2ZmIiwgaGVhZGVyPUYsIHNlcD0iXHQiLCBzdHJpbmdzQXNGYWN0b3JzID0gRikNCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlY1Il08LSAiaGduY19zeW1ib2wiDQpuYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PSJWMSJdPC0gImNociINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlYyIl08LSAic3RhcnQiDQpuYW1lcyhtYWNhY2FfZ2VuZXMpW25hbWVzKG1hY2FjYV9nZW5lcyk9PSJWMyJdPC0gImVuZCINCm5hbWVzKG1hY2FjYV9nZW5lcylbbmFtZXMobWFjYWNhX2dlbmVzKT09IlY0Il08LSAibmNiaV9pZCINCm1hY2FjYV9nZW5lcyRsZW5ndGg8LW1hY2FjYV9nZW5lcyRlbmQgLSBtYWNhY2FfZ2VuZXMkc3RhcnQNCg0KZmlsZXMgPC0gbGlzdC5maWxlcyhwYXRoPSIvcGF0aC90by9maWxlcyIsIHBhdHRlcm49IioudHh0IiwgZnVsbC5uYW1lcz1UUlVFKQ0KdGhlX2RpcjwtICIvcGF0aC90by9kaXIiDQpmb3IgKGZpbGUgaW4gZmlsZXMpew0KCXJlc3VsdHM8LXJlYWRfdHN2KGZpbGUsIGNvbF9uYW1lcz1GKQ0KCXJlc3VsdHM8LXJlc3VsdHMgJT4lIHBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSBYMSwgdmFsdWVzX2Zyb20gPSBYMykNCnJlc3VsdHNbaXMubmEocmVzdWx0cyldPC0gMA0KDQpyZXN1bHRzPC1yZXN1bHRzICU+JSBtdXRhdGUoZGFtYWdpbmcgPSByb3dTdW1zKHNlbGVjdCguLCBjb250YWlucyhjKCJzdG9wX2xvc3QiLCAic3RvcF9nYWluZWQiLCAic3BsaWNlX2FjY2VwdG9yIiwgInNwbGljZV9kb25vciIsICJtaXNzZW5zZSIsICJmcmFtZXNoaWZ0IiwgInN0YXJ0X2xvc3QiLCAic3RhcnRfZ2FpbmVkIiwgIm1pc3NlbnNlIiwgInNwbGljZV9yZWdpb24iLCAiZGlzcnVwdGl2ZV9pbmZyYW1lIiwgImNvZGluZ19zZXF1ZW5jZSIsICJjb25zZXJ2YXRpdmVfaW5mcmFtZSIpKSkpKQ0KDQpyZXN1bHRzPC1yZXN1bHRzWyEocmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPT0gMCAmIHJlc3VsdHMkZGFtYWdpbmcgPT0gMCksIF0NCg0KcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyAxDQoNCnJlc3VsdHM8LXJlc3VsdHMgJT4lIG11dGF0ZShyYXRpbz1kYW1hZ2luZy9zeW5vbnltb3VzX3ZhcmlhbnQpDQpyZXN1bHRzJHRvdGFsPC0gcmVzdWx0cyRzeW5vbnltb3VzX3ZhcmlhbnQgKyByZXN1bHRzJGRhbWFnaW5nDQoNCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDIiXTwtICJoZ25jX3N5bWJvbCINCm5hbWVzKHJlc3VsdHMpW25hbWVzKHJlc3VsdHMpPT0iWDQiXTwtICJjaHIiDQoNCnJlc3VsdHM8LW1lcmdlKHJlc3VsdHMsIG1hY2FjYV9nZW5lcywgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLlg9VCwgYWxsLnk9RikNCg0KcmVzdWx0cyA8LSByZXN1bHRzWywgYygiaGduY19zeW1ib2wiLCAiY2hyLngiLCAic3lub255bW91c192YXJpYW50IiwgImRhbWFnaW5nIiwgInJhdGlvIiwgInRvdGFsIiwgInN0YXJ0IiwgImVuZCIsICJsZW5ndGgiKV0NCg0Kd3JpdGVfY3N2KHJlc3VsdHMsIGZpbGU9IHBhc3RlMCh0aGVfZGlyLCAiLyIsIGJhc2VuYW1lKGZpbGUpKSwgY29sX25hbWVzPVQpDQp9DQpgYGANCg0KRmluYWxseSBjYWxjdWxhdGUgcnZpcyBzY29yZXMuIEZpcnN0IGNvbWJpbmUgYWxsIGZpbGVzIGdlbmVyYXRlZCBhYm92ZSBpbnRvIG9uZToNCg0KYGBge3J9DQpmaWxlcyAgPC0gbGlzdC5maWxlcyhwYXR0ZXJuID0gJ1xcLnR4dCcpDQp0YWJsZXMgPC0gbGFwcGx5KGZpbGVzLCByZWFkLmNzdiwgaGVhZGVyID0gVFJVRSkNCmNvbWJpbmVkIDwtIGRvLmNhbGwocmJpbmQsIHRhYmxlcykNCiN3cml0ZV9jc3YoY29tYmluZWQsIGZpbGU9ImNvbWJpbmVkLnR4dCIsIGNvbF9uYW1lcz1UKQ0KI2NvbWJpbmVkPC1yZWFkX2NzdigiY29tYmluZWQudHh0IiwgY29sX25hbWVzID0gVCkNCmxtLnIgPSBsbShkYW1hZ2luZyB+IHRvdGFsLCBkYXRhPWNvbWJpbmVkKQ0Kc3VtbWFyeShsbS5yKQ0KI2NvZWYobG0ucikgIyBnaXZlcyB0aGUgbW9kZWzigJlzIGNvZWZmaWNpZW50cw0KI2ZpdHRlZChsbS5yKSAjIGdpdmVzIHRoZSBwcmVkaWN0ZWQgdmFsdWVzIGZvciBZLCBpLmUuICB0aGUgZXhwZWN0ZWQgYnVyZGVuIG9mIG1pc3NlbnNlIG11dGF0aW9ucw0KI3Jlc2lkKGxtLnIpICMgZ2l2ZXMgdGhlIHJlc2lkdWFsIGVycm9ycyBpbiBZDQojY29lZihsbS5yKSAjIGdpdmVzIHRoZSBtb2RlbOKAmXMgY29lZmZpY2llbnRzDQogIA0KI2xheW91dChtYXRyaXgoMTo0LDIsMikpDQojcGxvdChsbS5yKQ0KDQpgYGANCg0KQWRkIHJlc2lkdWFscyBhbmQgZml0dGVkIHZhbHVlcyB0byBjb21iaW5lZCBkYXRhIGZyYW1lLCBnZW5lcmF0ZSBzdHVkZW50aXplZCByZXNpZHVhbHMgKHRoZSBSVklTIHNjb3JlKSBhbmQgc2F2ZToNCg0KYGBge3J9DQpjb21iaW5lZCRyZXNpZDwtcmVzaWQobG0ucikNCmNvbWJpbmVkJGZpdHRlZDwtZml0dGVkKGxtLnIpDQpzZChjb21iaW5lZCRyZXNpZCkNCmNvbWJpbmVkJHJ2aXMgPC0gY29tYmluZWQkcmVzaWQvMy4yMzkNCndyaXRlX2Nzdihjb21iaW5lZCwgZmlsZT0icnZpcy1yZXN1bHRzLnR4dCIsIGNvbF9uYW1lcz1UKQ0KYGBgDQoNCg0KTm90ZTogUG9zaXRpdmUgUlZJUyBzY29yZXMgaW5kaWNhdGUgdGhhdCB0aGVyZSBhcmUgYSBncmVhdGVyIG51bWJlciBvZiBkYW1hZ2luZyB2YXJpYW50cyB0aGFuIGV4cGVjdGVkIC0tIHRoZSBnZW5lIGlzIHRvbGVyYW50IG9mIG11dGF0aW9ucy4gQW5kIHZpY2UgdmVyc2EgZm9yIG5lZ2F0aXZlIFJWSVMgc2NvcmVzLiANCg0KWW91IG5vdyBuZWVkIHRvIGFkZCBleHRyYSBjb2x1bW5zIHRvIGVhcm1hcmsgZGlzb3JkZXIgc3BlY2lmaWMgZ2VuZXM6DQoNCmBgYHtyfQ0KIyByZWFkIGluIHRoZSBmaWxlIHlvdSBoYXZlIGdlbmVyYXRlZA0KcnZpczwtcmVhZC5jc3YoInJ2aXMvcnZpcy1yZXN1bHRzLnR4dCIsIGhlYWRlcj1UKQ0KDQojSWYgbmNlc3NhcnksIGZvcm1hdCBjaHJvbW9zb21lIGNvbHVtbjoNCiNydmlzIDwtIHJ2aXMgJT4lIG11dGF0ZShjaHIgPSBhcy5udW1lcmljKGdzdWIoIlthLXpdIiwgIiIsIGNocikpKQ0KI3J2aXMkY2hyPC1hcy5mYWN0b3IocnZpcyRjaHIpDQoNCiNyZWFkIGluIGxpc3Qgb2YgU0ZBUkkgZ2VuZXMNCnNmYXJpLmFzZDwtcmVhZC5kZWxpbSgiL3BhdGgvdG8vZmlsZXMvU0ZBUkktYXNkLWdlbmVzLmNzdiIsIGhlYWRlcj1ULCBzZXA9IiwiLCBzdHJpbmdzQXNGYWN0b3JzID0gRikNCm5hbWVzKHNmYXJpLmFzZClbbmFtZXMoc2ZhcmkuYXNkKT09ImdlbmUuc3ltYm9sIl08LSJoZ25jX3N5bWJvbCIgDQpzZmFyaS5hbGw8LSBzZmFyaS5hc2RbLCBjKDIsNSldDQpzZmFyaS5hbGwkc2ZhcmlfYWxsPC0iMSINCnJ2aXM8LW1lcmdlKHNmYXJpLmFsbCwgcnZpcywgYnk9ImhnbmNfc3ltYm9sIiwgYWxsLng9RiwgYWxsLnk9VCkNCnJ2aXMkc2ZhcmlfYWxsW2lzLm5hKHJ2aXMkc2ZhcmlfYWxsKV08LTANCm5hbWVzKHJ2aXMpW25hbWVzKHJ2aXMpPT0iY2hyLngiXTwtImNociINCnJ2aXMgPC0gcnZpcyAlPiUgc2VsZWN0KC1jb250YWlucyhjKCdjaHJvbScsICdlbnNlbWInKSkpICN0aWR5aW5nIHVwDQpgYGANCg0KDQpJZGVudGljYWwgcHJvY2VzcyBmb3Igb3RoZXIgZ2VuZSBzZXRzOg0KDQpgYGB7cn0NCmVwaWxlcHN5X2Rpc2dlbmV0PC1yZWFkLmRlbGltKCIvcGF0aC90by9maWxlcy9lcGlsZXBzeV9kaXNnZW5ldC50eHQiLCBzZXA9IiwiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycz1GKQ0KZXBpbGVwc3lfZGlzZ2VuZXQkZXBpbGVwc3k8LSIxIg0KZXBpbGVwc3k8LWVwaWxlcHN5X2Rpc2dlbmV0WywgYygxLCA0KV0NCm5hbWVzKGVwaWxlcHN5KVtuYW1lcyhlcGlsZXBzeSk9PSJHZW5lIl08LSJoZ25jX3N5bWJvbCINCnJ2aXM8LW1lcmdlKHJ2aXMsIGVwaWxlcHN5LCBieT0iaGduY19zeW1ib2wiLCBhbGwueD1ULCBhbGwueT1GKQ0KcnZpcyRlcGlsZXBzeVtpcy5uYShydmlzJGVwaWxlcHN5KV08LTANCg0KYXNkX2Rpc2dlbmV0PC1yZWFkLmRlbGltKCIvcGF0aC90by9maWxlcy9hc2RfZGlzZ2VuZXQudHh0Iiwgc2VwPSJcdCIsIGhlYWRlcj1ULCBzdHJpbmdzQXNGYWN0b3JzPUYpDQphc2RfZGlzZ2VuZXQkYXNkX2Rpc2dlbmV0PC0iMSINCmFzZDwtYXNkX2Rpc2dlbmV0WywgYygxLCA0KV0NCm5hbWVzKGFzZClbbmFtZXMoYXNkKT09IkdlbmUiXTwtImhnbmNfc3ltYm9sIg0KcnZpczwtbWVyZ2UocnZpcywgYXNkLCBieT0iaGduY19zeW1ib2wiLCBhbGwueD1ULCBhbGwueT1GKQ0KcnZpcyRhc2RfZGlzZ2VuZXRbaXMubmEocnZpcyRhc2RfZGlzZ2VuZXQpXTwtMA0KICANCmlkX2Rpc2dlbmV0PC1yZWFkLmRlbGltKCJwYXRoL3RvL2ZpbGVzL2lkX2Rpc2dlbmV0LnR4dCIsIHNlcD0iXHQiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycz1GKQ0KaWRfZGlzZ2VuZXQkaWRfZGlzZ2VuZXQ8LSIxIg0KaWQ8LWlkX2Rpc2dlbmV0WywgYygxLCA0KV0NCm5hbWVzKGlkKVtuYW1lcyhpZCk9PSJHZW5lIl08LSJoZ25jX3N5bWJvbCINCnJ2aXM8LW1lcmdlKHJ2aXMsIGlkLCBieT0iaGduY19zeW1ib2wiLCBhbGwueD1ULCBhbGwueT1GKQ0KcnZpcyRpZF9kaXNnZW5ldFtpcy5uYShydmlzJGlkX2Rpc2dlbmV0KV08LTANCiANCnN6X2Rpc2dlbmV0PC1yZWFkLmRlbGltKCIvcGF0aC90by9maWxlcy9zel9kaXNnZW5ldC50eHQiLCBzZXA9IiwiLCBoZWFkZXI9VCwgc3RyaW5nc0FzRmFjdG9ycz1GKQ0Kc3pfZGlzZ2VuZXQkc3o8LSIxIg0Kc3o8LXN6X2Rpc2dlbmV0WywgYygxLCA0KV0NCm5hbWVzKHN6KVtuYW1lcyhzeik9PSJHZW5lIl08LSJoZ25jX3N5bWJvbCINCnJ2aXM8LW1lcmdlKHJ2aXMsIHN6LCBieT0iaGduY19zeW1ib2wiLCBhbGwueD1ULCBhbGwueT1GKQ0KcnZpcyRzeltpcy5uYShydmlzJHN6KV08LTANCmBgYA0KDQpBbmQgZm9yIE5ERCBnZW5lczogdGhlc2UgYXJlIGdlbmVzIHRoYXQgb3ZlcmxhcCBhbGwgZGlzb3JkZXJzOg0KDQpgYGB7cn0NCg0KcnZpcyROREQ8LWlmZWxzZShydmlzJGVwaWxlcHN5PT0xICYgcnZpcyRhc2RfZGlzZ2VuZXQ9PTEgJiBydmlzJGlkX2Rpc2dlbmV0ID09IDEgJiBydmlzJHN6ID09IDEsIDEsIDApDQpydmlzJE5ERDwtYXMuZmFjdG9yKHJ2aXMkTkREKQ0KDQojIGZvciBzb21lIHN1bW1hcnkgc3RhdHMuIA0KIyB0YXBwbHkocnZpcyRydmlzLCBydmlzJE5ERCwgc3VtbWFyeSkgDQpgYGANCg0KDQpTYXZlIHRoaXMgZmlsZS4gQWxsIHN1YnNlcXVlbnQgYW5hbHlzZXMgYXJlIHBlcmZvcm1lZCB1c2luZyB0aGlzIGZpbGU6DQoNCmBgYHtyfQ0Kd3JpdGVfY3N2KHJ2aXMsIGZpbGU9InJ2aXNfcmVzdWx0c19hbm5vdGF0ZWQuY3N2IiwgY29sX25hbWVzPVRSVUUpDQpgYGANCg0K</div>
 
 
 

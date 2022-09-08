@@ -5,7 +5,7 @@ output: html_notebook
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and p
+Execute code by clicking the *Run* button within the chunk or by placing your cursor inside it and p
 
 =============================================================
 
@@ -177,27 +177,31 @@ summary(lm.r)
   
 #layout(matrix(1:4,2,2))
 #plot(lm.r)
-  
-#add residuals and fitted values to combined data frame
+
+```
+
+Add residuals and fitted values to combined data frame, generate studentized residuals (the RVIS score) and save:
+
+```{r}
 combined$resid<-resid(lm.r)
 combined$fitted<-fitted(lm.r)
-  
-#generate column of studentized residuals -- the rvis score
 sd(combined$resid)
 combined$rvis <- combined$resid/3.239
-  
-#save this data.frame
 write_csv(combined, file="rvis-results.txt", col_names=T)
 ```
 
 
-Note: Positive RVIS scores indicate that there are a greater number of damaging variants than expected -- presumably the gene is tolerant of mutations. And vice versa for negative RVIS scores. 
+Note: Positive RVIS scores indicate that there are a greater number of damaging variants than expected -- the gene is tolerant of mutations. And vice versa for negative RVIS scores. 
 
 You now need to add extra columns to earmark disorder specific genes:
 
 ```{r}
 # read in the file you have generated
 rvis<-read.csv("rvis/rvis-results.txt", header=T)
+
+#If ncessary, format chromosome column:
+#rvis <- rvis %>% mutate(chr = as.numeric(gsub("[a-z]", "", chr)))
+#rvis$chr<-as.factor(rvis$chr)
 
 #read in list of SFARI genes
 sfari.asd<-read.delim("/path/to/files/SFARI-asd-genes.csv", header=T, sep=",", stringsAsFactors = F)
@@ -243,11 +247,9 @@ rvis<-merge(rvis, sz, by="hgnc_symbol", all.x=T, all.y=F)
 rvis$sz[is.na(rvis$sz)]<-0
 ```
 
-And for NDD genes: these are genes that overlap all disorders (note the need to convert the chr column)
+And for NDD genes: these are genes that overlap all disorders:
 
 ```{r}
-rvis <- rvis %>% mutate(chr = as.numeric(gsub("[a-z]", "", chr)))
-rvis$chr<-as.factor(rvis$chr)
 
 rvis$NDD<-ifelse(rvis$epilepsy==1 & rvis$asd_disgenet==1 & rvis$id_disgenet == 1 & rvis$sz == 1, 1, 0)
 rvis$NDD<-as.factor(rvis$NDD)
